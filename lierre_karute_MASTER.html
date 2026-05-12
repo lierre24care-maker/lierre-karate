@@ -275,7 +275,23 @@ canvas{width:100%!important;max-height:190px;}
 // ════════════════════════ DATA ════════════════════════
 var DB = {
   load: function() {
-    try { return JSON.parse(localStorage.getItem('sk5_pts') || '[]'); } catch(e) { return []; }
+    // embedded-dataにデータがあれば必ずそちらを優先
+    try {
+      var el = document.getElementById('embedded-data');
+      if (el && el.textContent.trim() && el.textContent.trim() !== '[]') {
+        var data = JSON.parse(el.textContent);
+        if (data && data.length > 0) {
+          try { localStorage.setItem('sk5_pts', JSON.stringify(data)); } catch(e) {}
+          return data;
+        }
+      }
+    } catch(e) {}
+    // localStorageから読む
+    try {
+      var d = localStorage.getItem('sk5_pts');
+      if (d) return JSON.parse(d);
+    } catch(e) {}
+    return [];
   },
   save: function(pts) {
     try { localStorage.setItem('sk5_pts', JSON.stringify(pts)); } catch(e) {}
@@ -1227,6 +1243,7 @@ function saveVisit() {
   if (!p.visits) p.visits = [];
   p.visits.push(v);
   DB.save(patients);
+  renderList();
   toast('✅ 記録を保存しました');
   openPt(curId);
 }
@@ -1372,9 +1389,9 @@ function saveEditedVisit() {
     var circ = {};
     document.querySelectorAll('.mi').forEach(function(inp) {
       if (inp.value) {
-        var parts = inp.id.split('-'); parts.shift();
-        var side = parts.shift();
-        circ[side + ' ' + parts.join('-')] = inp.value;
+        var side = inp.getAttribute('data-side') || '';
+        var site = inp.getAttribute('data-site') || '';
+        if (side && site) circ[side + ' ' + site] = inp.value;
       }
     });
     v.circ = circ;
@@ -1388,9 +1405,9 @@ function saveEditedVisit() {
   }
 
   DB.save(patients);
+  renderList();
   toast('✅ 記録を更新しました');
   editVisitIdx = null;
-  // Restore save button to original
   document.getElementById('v-save').onclick = saveVisit;
   openPt(curId);
 }
@@ -1753,6 +1770,7 @@ function deleteVisit(idx, e) {
   if (!confirm(dateStr + ' の来店記録を削除しますか？\nこの操作は元に戻せません。')) return;
   p.visits.splice(idx, 1);
   DB.save(patients);
+  renderList();
   toast('🗑 来店記録を削除しました');
   renderVisits(p);
   renderCharts(p);
@@ -1760,12 +1778,27 @@ function deleteVisit(idx, e) {
 
 
 function exportData() {
-  var blob = new Blob([JSON.stringify(patients, null, 2)], { type: 'application/json' });
+  // データをHTMLに埋め込んで保存
+  var el = document.getElementById('embedded-data');
+  var html;
+  if (el) {
+    el.textContent = JSON.stringify(patients);
+    html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+  } else {
+    // embedded-dataがない場合はdocumentにデータを注入
+    html = document.documentElement.outerHTML.replace(
+      '</body>',
+      '<script type="application/json" id="embedded-data">' + JSON.stringify(patients) + '<\/script></body>'
+    );
+  }
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href = url; a.download = 'salon_karute_' + new Date().toISOString().slice(0,10) + '.json';
-  a.click(); URL.revokeObjectURL(url);
-  toast('📥 エクスポートしました');
+  a.href = url;
+  a.download = 'lierre_karute_' + new Date().toISOString().slice(0,10) + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📥 HTMLファイルとして保存しました');
 }
 
 // ════════════════════════ UTILS ════════════════════════
@@ -1818,5 +1851,7 @@ window.addEventListener('load', function() {
 });
 
 </script>
+
+<script type="application/json" id="embedded-data">[]</script>
 </body>
 </html>
