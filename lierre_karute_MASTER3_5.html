@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lierre カルテ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>:root{--sage:#7a9e87;--sage-l:#b8d4c0;--sage-p:#eef5f0;--bio:#9b7ec4;--bio-l:#d4c4f0;--bio-p:#f4f0fb;--acc:#c4956a;--acc-l:#f0e0d0;--cream:#faf8f4;--wg:#8a8680;--dark:#2c2a28;--border:#ddd8d0;--white:#fff;--red:#c0392b;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;font-size:16px;line-height:1.7;}
+.topbar{background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:54px;position:sticky;top:0;z-index:100;}
+.tb-title{font-family:'DM Serif Display',serif;font-size:19px;color:var(--sage-l);letter-spacing:.05em;}
+.tb-sub{font-size:10px;color:var(--wg);}
+.tb-r{display:flex;gap:6px;}
+.tbtn{background:var(--sage);color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap;}
+.tbtn:hover{background:var(--sage-l);color:var(--dark);}
+.screen{display:none;}.screen.active{display:block;}
+.wrap{max-width:680px;margin:0 auto;padding:18px 16px 80px;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.stitle{font-family:'Noto Serif JP',serif;font-size:17px;}
+.search{display:flex;gap:8px;margin-bottom:10px;}
+.search input{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:9px 13px;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--white);color:var(--dark);outline:none;}
+.search input:focus{border-color:var(--sage);}
+.ftabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+.ft{padding:5px 13px;border-radius:20px;border:1.5px solid var(--border);background:var(--cream);color:var(--wg);font-size:12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+.ft.on{background:var(--sage-p);border-color:var(--sage);color:var(--sage);}
+.ft.on.bio{background:var(--bio-p);border-color:var(--bio);color:var(--bio);}
+.ptcard{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;margin-bottom:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:rgba(0,0,0,0.1);touch-action:manipulation;}
+.ptcard:hover{border-color:var(--sage);box-shadow:0 3px 10px rgba(122,158,135,.15);}
+.ptname{font-family:'Noto Serif JP',serif;font-size:16px;font-weight:500;}
+.ptmeta{font-size:11px;color:var(--wg);margin-top:2px;}
+.badge{border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;}
+.badge.ly{background:var(--acc-l);color:var(--acc);}
+.badge.bi{background:var(--bio-p);color:var(--bio);}
+.fc{background:var(--white);border-radius:12px;border:1.5px solid var(--border);padding:20px;margin-bottom:16px;}
+.fch{font-family:'Noto Serif JP',serif;font-size:14px;color:var(--sage);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--sage-p);display:flex;align-items:center;gap:8px;}
+.fch::before{content:'';display:inline-block;width:4px;height:15px;background:var(--sage);border-radius:2px;flex-shrink:0;}
+.fch.bi{color:var(--bio);border-bottom-color:var(--bio-p);}.fch.bi::before{background:var(--bio);}
+.fch.staff{color:var(--acc);border-bottom-color:var(--acc-l);}.fch.staff::before{background:var(--acc);}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.fr1{margin-bottom:14px;}
+.fr1:last-child,.fr2:last-child,.fr3:last-child{margin-bottom:0;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:12px;color:var(--wg);}
+.req{color:var(--red);margin-left:2px;}
+.fi,.fsel,.fta{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;font-size:15px;font-family:'Noto Sans JP',sans-serif;color:var(--dark);background:var(--white);outline:none;transition:border-color .2s;-webkit-appearance:none;}
+.fi:focus,.fsel:focus,.fta:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(122,158,135,.1);}
+.fta{resize:vertical;min-height:72px;}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;}
+.chip{padding:8px 14px;border:1.5px solid var(--border);border-radius:22px;cursor:pointer;font-size:13px;background:var(--white);transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.chip:active{transform:scale(.95);}
+.chip.on,.chip.ex{background:var(--sage);border-color:var(--sage);color:#fff;font-weight:500;}
+.chip.on.bio,.chip.ex.bio{background:var(--bio);border-color:var(--bio);color:#fff;}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:var(--white);}
+.step-btn{width:46px;height:48px;font-size:22px;border:none;background:none;cursor:pointer;color:var(--sage);flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+.step-btn:hover{background:var(--sage-p);}
+.step-input{flex:1;border:none;outline:none;text-align:center;font-size:18px;font-weight:500;font-family:'Noto Sans JP',sans-serif;color:var(--dark);background:transparent;width:0;min-width:0;padding:0;-moz-appearance:textfield;}
+.step-input::-webkit-outer-spin-button,.step-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.sig-wrap{border:2px dashed var(--border);border-radius:12px;background:var(--white);height:130px;position:relative;overflow:hidden;margin-top:6px;touch-action:none;cursor:crosshair;}
+.sig-wrap canvas{display:block;}
+.sig-ph{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--border);font-size:14px;pointer-events:none;white-space:nowrap;}
+.sig-clear{margin-top:8px;background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;color:var(--wg);cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+.sig-clear:hover{border-color:var(--sage);color:var(--sage);}
+.consent-box{background:var(--sage-p);border:1.5px solid var(--sage-l);border-radius:10px;padding:14px;font-size:13px;line-height:1.85;margin-bottom:12px;}
+.consent-box.bi{background:var(--bio-p);border-color:var(--bio-l);}
+.consent-check{display:flex;align-items:flex-start;gap:10px;margin-top:12px;cursor:pointer;}
+.consent-check input{width:22px;height:22px;flex-shrink:0;accent-color:var(--sage);margin-top:2px;}
+.consent-check.bi input{accent-color:var(--bio);}
+.consent-lbl{font-size:14px;line-height:1.6;}
+.prog{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;}
+.prog-steps{display:flex;max-width:520px;margin:0 auto;}
+.ps{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;}
+.ps:not(:last-child)::after{content:'';position:absolute;top:13px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;}
+.ps.done:not(:last-child)::after{background:var(--sage-l);}
+.ps.done.bi:not(:last-child)::after{background:var(--bio-l);}
+.ps-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--wg);position:relative;z-index:1;transition:all .25s;}
+.ps.active .ps-dot{border-color:var(--sage);background:var(--sage);color:#fff;}
+.ps.active.bi .ps-dot{border-color:var(--bio);background:var(--bio);}
+.ps.done .ps-dot{border-color:var(--sage-l);background:var(--sage-l);color:#fff;}
+.ps.done.bi .ps-dot{border-color:var(--bio-l);background:var(--bio-l);}
+.ps-lbl{font-size:9px;color:var(--wg);margin-top:3px;text-align:center;}
+.ps.active .ps-lbl{color:var(--sage);font-weight:600;}
+.ps.active.bi .ps-lbl{color:var(--bio);}
+.pg{display:none;}.pg.active{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.btn-p{background:var(--sage);color:#fff;border:none;border-radius:12px;padding:14px 20px;font-size:16px;font-family:'Noto Serif JP',serif;cursor:pointer;width:100%;margin-top:8px;letter-spacing:.04em;transition:background .2s,transform .1s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.btn-p:hover{background:#5a8060;}.btn-p:active{transform:scale(.97);}
+.btn-p:disabled{background:var(--border);cursor:not-allowed;}
+.btn-p.bi{background:var(--bio);}.btn-p.bi:hover{background:#7a5ea0;}
+.btn-p.staff{background:var(--acc);}.btn-p.staff:hover{background:#a07040;}
+.btn-s{background:none;border:1.5px solid var(--border);border-radius:12px;padding:12px 16px;font-size:15px;font-family:'Noto Sans JP',sans-serif;color:var(--wg);cursor:pointer;width:100%;margin-top:8px;}
+.btn-s:hover{border-color:var(--sage);color:var(--sage);}
+.brow{display:flex;gap:8px;}.brow>*{flex:1;}
+.back{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--wg);cursor:pointer;background:none;border:none;font-family:'Noto Sans JP',sans-serif;margin-bottom:14px;padding:0;}
+.back:hover{color:var(--sage);}
+.chdr{padding:22px 16px 18px;text-align:center;color:#fff;}
+.chdr.sage{background:var(--sage);}
+.chdr.bio{background:linear-gradient(135deg,#7a5ea0,var(--bio));}
+.chdr-icon{font-size:26px;margin-bottom:5px;}
+.chdr-title{font-family:'Noto Serif JP',serif;font-size:20px;letter-spacing:.06em;}
+.chdr-sub{font-size:12px;opacity:.85;margin-top:4px;}
+.cc-row{display:flex;gap:12px;margin-bottom:16px;}
+.cc{flex:1;border:2px solid var(--border);border-radius:13px;padding:18px 10px;cursor:pointer;transition:all .2s;text-align:center;background:var(--white);-webkit-tap-highlight-color:rgba(0,0,0,0.1);touch-action:manipulation;}
+.cc:hover{border-color:var(--sage);}
+.cc-icon{font-size:28px;margin-bottom:5px;}
+.cc-name{font-family:'Noto Serif JP',serif;font-size:14px;font-weight:500;}
+.cc-desc{font-size:11px;color:var(--wg);margin-top:3px;}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:13px;}
+.ii{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ii:nth-child(odd){border-right:1px solid var(--border);}
+.ii .lb{font-size:10px;color:var(--wg);}
+.ii .vl{word-break:break-all;}
+.vi{border-left:3px solid var(--sage-l);padding:12px 14px;margin-bottom:10px;background:var(--white);border-radius:0 10px 10px 0;}
+.vi.bi{border-left-color:var(--bio-l);}
+.v-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.vdate{font-family:'Noto Serif JP',serif;font-size:13px;color:var(--sage);}
+.vdate.bi{color:var(--bio);}
+.v-btns{display:flex;gap:6px;}
+.v-btn{background:none;border:none;font-size:13px;cursor:pointer;padding:2px 5px;color:var(--border);}
+.v-btn:hover{color:var(--wg);}
+.vstats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+.vstat{background:var(--cream);border-radius:7px;padding:4px 9px;font-size:12px;}
+.vstat .lb{font-size:10px;color:var(--wg);}
+.tbadge{display:inline-flex;align-items:center;background:var(--acc-l);color:var(--acc);padding:3px 9px;border-radius:20px;font-size:12px;font-weight:500;}
+.tbadge.ok{background:var(--sage-p);color:var(--sage);}
+.vrow{font-size:12px;color:var(--wg);margin-top:3px;}
+.vrow span{color:var(--dark);}
+.chart-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:13px;margin-bottom:12px;overflow:hidden;}
+.chart-title{font-size:12px;color:var(--wg);margin-bottom:7px;}
+canvas{width:100%!important;max-height:190px;}
+.photo-up{border:2px dashed var(--border);border-radius:11px;background:var(--white);padding:18px;text-align:center;cursor:pointer;transition:all .2s;position:relative;margin-top:8px;}
+.photo-up:hover{border-color:var(--sage);background:var(--sage-p);}
+.photo-up.bi:hover{border-color:var(--bio);background:var(--bio-p);}
+.photo-up input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:8px;}
+.pt-wrap{position:relative;border-radius:9px;overflow:hidden;background:var(--cream);aspect-ratio:4/3;}
+.pt-wrap img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;}
+.pt-lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(44,42,40,.65);color:#fff;font-size:10px;padding:3px 7px;text-align:center;}
+.pt-del{position:absolute;top:4px;right:4px;background:rgba(44,42,40,.7);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.photo-compare{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px;}
+.pc-item img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;cursor:pointer;}
+.lbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;align-items:center;justify-content:center;flex-direction:column;}
+.lbox.open{display:flex;}
+.lbox img{max-width:92vw;max-height:82vh;border-radius:10px;}
+.lbox-x{position:absolute;top:14px;right:18px;color:#fff;font-size:26px;cursor:pointer;background:none;border:none;}
+.lbox-cap{color:rgba(255,255,255,.7);font-size:12px;margin-top:8px;}
+.staff-box{background:var(--acc-l);border:1.5px solid var(--acc);border-radius:10px;padding:12px 14px;font-size:12px;margin-bottom:14px;line-height:1.7;}
+.toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--dark);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;z-index:9999;transition:transform .3s;white-space:nowrap;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.errmsg{color:var(--red);font-size:12px;margin-top:4px;display:none;}
+.errmsg.show{display:block;}
+.empty{text-align:center;padding:48px 16px;color:var(--wg);}
+.empty-ic{font-size:40px;margin-bottom:8px;}
+#print-header{display:none;}
+@media print{body{background:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.topbar,.back,#d-add-btn,#visit-list,#d-photos-fc,#d-info-fc,.print-hide,.sh{display:none!important;}#sc-detail{display:block!important;}.screen:not(#sc-detail){display:none!important;}.wrap{padding:8px 0 0!important;max-width:100%!important;}#charts-sec{display:block!important;}#print-header{display:block!important;}.chart-wrap{break-inside:avoid;border:1px solid #e0ddd8!important;margin-bottom:14px;padding:12px!important;}canvas{max-height:200px!important;}}
+@media(max-width:580px){.fr2{grid-template-columns:1fr;}.fr3{grid-template-columns:1fr 1fr;}.ig{grid-template-columns:1fr;}.ii:nth-child(odd){border-right:none;}.cc-row{flex-direction:column;}.tb-sub{display:none;}}</style>
+</head>
+<body>
+<div class="topbar"><div><div class="tb-title">Lierre</div><div class="tb-sub">カルテ管理</div></div><div class="tb-r"><button class="tbtn" onclick="exportData()">📥 保存</button><button class="tbtn" onclick="goNewCourse()">＋ 新規登録</button></div></div>
+<div id="sc-list" class="screen active"><div class="wrap"><div class="sh"><div class="stitle">お客様一覧</div><div id="pt-count" style="font-size:12px;color:var(--wg)"></div></div><div class="search"><input id="q" placeholder="お名前で検索…" oninput="renderList()"></div><div class="ftabs"><button class="ft on" onclick="setF('all',this)">すべて</button><button class="ft" onclick="setF('ly',this)">🌿 リンパ浮腫ケア</button><button class="ft bio" onclick="setF('bi',this)">🌱 巡温バイオケア</button></div><div id="pt-list"></div></div></div>
+<div id="sc-course" class="screen"><div class="wrap"><button class="back" onclick="go('list')">← 戻る</button><div class="stitle" style="margin-bottom:6px">新規お客様登録</div><p style="font-size:13px;color:var(--wg);margin-bottom:18px">コースを選んでください</p><div class="cc-row"><div class="cc" onclick="startReg('ly')"><div class="cc-icon">🌿</div><div class="cc-name">リンパ浮腫ケア</div><div class="cc-desc">周径測定・経過観察</div></div><div class="cc" onclick="startReg('bi')"><div class="cc-icon">🌱</div><div class="cc-name">巡温バイオケア</div><div class="cc-desc">体温・体組成・ライフスタイル</div></div></div></div></div>
+<div id="sc-reg-ly" class="screen">
+<div class="chdr sage"><div class="chdr-icon">🌿</div><div class="chdr-title">はじめまして</div><div class="chdr-sub">リンパ浮腫ケアコース｜ご記入票</div></div>
+<div class="prog" id="ly-prog"><div class="prog-steps" id="ly-steps"></div></div>
+<div class="wrap">
+<div class="pg active" id="ly-p1">
+<div class="fc"><div class="fch">お客様情報</div><div class="fr2"><div class="fg"><label class="fl">お名前<span class="req">＊</span></label><input class="fi" id="ly-name" placeholder="山田 花子"><div class="errmsg" id="ly-name-err">お名前をご記入ください</div></div><div class="fg"><label class="fl">フリガナ</label><input class="fi" id="ly-kana" placeholder="ヤマダ ハナコ"></div></div><div class="fr2"><div class="fg"><label class="fl">生年月日<span class="req">＊</span></label><input class="fi" id="ly-birth" type="date" onkeyup="limitBirthYear(this)" onchange="limitBirthYear(this)"><div class="errmsg" id="ly-birth-err">生年月日をご記入ください</div></div><div class="fg"><label class="fl">性別</label><div class="chip-row"><div class="chip" onclick="selC('ly-gender','女性',this)">女性</div><div class="chip" onclick="selC('ly-gender','男性',this)">男性</div><div class="chip" onclick="selC('ly-gender','その他',this)">その他</div></div><input type="hidden" id="ly-gender"></div></div><div class="fr2"><div class="fg"><label class="fl">電話番号</label><input class="fi" id="ly-phone" type="tel" placeholder="090-0000-0000"></div><div class="fg"><label class="fl">1日の水分摂取量(ml)</label><input class="fi" id="ly-water" type="number" step="100" placeholder="例：1500"></div></div><div class="fr2"><div class="fg"><label class="fl">体重(kg)</label><input class="fi" id="ly-weight" type="number" step="0.1" placeholder="55.0"></div><div class="fg"><label class="fl">身長(cm)</label><input class="fi" id="ly-height" type="number" placeholder="158"></div></div></div><button class="btn-p" onclick="lyNext(2)">次へ →</button></div>
+<div class="pg" id="ly-p2">
+<div class="fc"><div class="fch">既往歴・健康状態について</div>
+<div class="fr1"><div class="fg"><label class="fl">高血圧・心疾患・糖尿病などはありますか？（複数選択可）</label>
+<div class="chip-row" id="ly-cond-chips"><div class="chip" onclick="togC(this,'ly-conditions')">高血圧</div><div class="chip" onclick="togC(this,'ly-conditions')">心疾患</div><div class="chip" onclick="togC(this,'ly-conditions')">糖尿病</div><div class="chip" onclick="togC(this,'ly-conditions')">腎臓病</div><div class="chip" onclick="togC(this,'ly-conditions')">甲状腺疾患</div><div class="chip" onclick="togC(this,'ly-conditions')">骨粗しょう症</div><div class="chip" onclick="togC(this,'ly-conditions')">血栓症</div><div class="chip" onclick="togC(this,'ly-conditions')">なし</div></div><input type="hidden" id="ly-conditions"><input class="fi" id="ly-conditions-other" placeholder="その他（自由記入）" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">現在、通院していますか？</label><div class="chip-row"><div class="chip" onclick="selC('ly-clinic','通院中',this)">通院中</div><div class="chip" onclick="selC('ly-clinic','していない',this)">していない</div></div><input type="hidden" id="ly-clinic"></div></div><div class="fr1"><div class="fg"><label class="fl">現在、飲んでいるお薬はありますか？</label><textarea class="fta" id="ly-meds" placeholder="例：降圧剤、利尿剤など&#10;特にない場合は「なし」"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">その他の既往歴・気になること</label><textarea class="fta" id="ly-history" placeholder="例：手術歴、けが、その他の病気など&#10;特にない場合は「なし」"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">アレルギーはありますか？</label><div class="chip-row"><div class="chip" onclick="selC('ly-allergy-yn','あり',this);document.getElementById('ly-allergy-wrap').style.display='block'">あり</div><div class="chip" onclick="selC('ly-allergy-yn','なし',this);document.getElementById('ly-allergy-wrap').style.display='none'">なし</div></div><input type="hidden" id="ly-allergy-yn"><div id="ly-allergy-wrap" style="display:none;margin-top:8px"><input class="fi" id="ly-allergy" placeholder="例：金属アレルギー、食物アレルギーなど"></div></div></div></div><div class="fc"><div class="fch">むくみについて</div><div class="fr1"><div class="fg"><label class="fl">むくんでいる部位はどこですか？<span class="req">＊</span></label><div class="chip-row"><div class="chip" onclick="selC('ly-limb','右腕',this)">右腕</div><div class="chip" onclick="selC('ly-limb','左腕',this)">左腕</div><div class="chip" onclick="selC('ly-limb','両腕',this)">両腕</div><div class="chip" onclick="selC('ly-limb','右脚',this)">右脚</div><div class="chip" onclick="selC('ly-limb','左脚',this)">左脚</div><div class="chip" onclick="selC('ly-limb','両脚',this)">両脚</div></div><input type="hidden" id="ly-limb"><div class="errmsg" id="ly-limb-err">部位をお選びください</div></div></div><div class="fr1"><div class="fg"><label class="fl">むくみはいつ頃から始まりましたか？</label><input class="fi" id="ly-onset" placeholder="例：2021年10月ごろ"></div></div><div class="fr1"><div class="fg"><label class="fl">思い当たる原因はありますか？</label><div class="chip-row"><div class="chip" onclick="selC('ly-cause','手術後から',this)">手術後から</div><div class="chip" onclick="selC('ly-cause','放射線治療後から',this)">放射線治療後から</div><div class="chip" onclick="selC('ly-cause','もともとむくみやすい',this)">もともとむくみやすい</div><div class="chip" onclick="selC('ly-cause','わからない',this)">わからない</div></div><input type="hidden" id="ly-cause"></div></div><div class="fr2"><div class="fg"><label class="fl">担当の先生</label><input class="fi" id="ly-doctor" placeholder="田中先生"></div><div class="fg"><label class="fl">病院名</label><input class="fi" id="ly-hospital" placeholder="〇〇病院"></div></div><div class="fr1"><div class="fg"><label class="fl">スタッフへ伝えたいことがあればどうぞ</label><textarea class="fta" id="ly-notes" placeholder="なんでもお気軽に…"></textarea></div></div></div><div class="brow"><button class="btn-s" onclick="lyNext(1)">← 戻る</button><button class="btn-p" onclick="lyNext(3)">次へ →</button></div></div>
+<div class="pg" id="ly-p3">
+<div class="fc"><div class="fch">ご記入内容の確認</div><div id="ly-confirm" style="font-size:13px;line-height:1.9"></div></div><div class="fc"><div class="fch ">ご同意とサイン</div><div class="consent-box "><div style="font-size:13px;line-height:1.85;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:12px">
+<p style="font-weight:600;font-size:14px;margin-bottom:8px">施術同意書</p>
+<p style="margin-bottom:8px">当サロンでは、お客様に安心して施術を受けていただくため、事前に内容をご確認いただいております。以下をご理解・ご同意の上、ご署名をお願いいたします。</p>
+<p style="font-weight:600;margin-bottom:4px">■ 施術について</p>
+<p style="margin-bottom:6px">当サロンでは、バイオテラピーおよびリンパ浮腫ケアを含む身体のメンテナンス・リラクゼーションを目的とした施術を行っております。</p>
+<p style="margin-bottom:6px">施術は医療行為・治療行為ではなく、疾病の診断・治療・完治を目的としたものではありません。現在通院中の方、治療中の方、服薬中の方は、必要に応じて主治医へご相談の上ご利用ください。</p>
+<p style="font-weight:600;margin-bottom:4px">以下に該当する方は事前にお申し出ください</p>
+<ul style="margin:0 0 6px 16px;line-height:2.0">
+<li>妊娠中、または妊娠の可能性がある方</li>
+<li>発熱、感染症、体調不良のある方</li>
+<li>重度の心疾患・腎疾患・肝疾患のある方</li>
+<li>血栓症、静脈炎の既往がある方</li>
+<li>がん治療中、または治療後間もない方</li>
+<li>骨折・捻挫・炎症・外傷のある方</li>
+<li>ペースメーカー等医療機器をご使用の方</li>
+<li>強い痛みや皮膚トラブルのある方</li>
+<li>医師よりマッサージ等を制限されている方</li>
+<li>その他、施術に不安のある方</li>
+</ul>
+<p style="margin-bottom:8px;font-size:12px;color:#666">※状態によっては施術をお断り、または内容を変更させていただく場合がございます。</p>
+<p style="font-weight:600;margin-bottom:4px">■ リンパ浮腫ケアについて</p>
+<p style="margin-bottom:8px">リンパ浮腫ケアは、浮腫の軽減や循環のサポート、日常生活の快適性向上を目的として行います。効果の感じ方には個人差があり、施術効果を保証するものではありません。施術後、一時的にだるさ・眠気・排尿回数の増加などが起こる場合があります。</p>
+<p style="font-weight:600;margin-bottom:4px">■ バイオテラピーについて</p>
+<p style="margin-bottom:8px">バイオテラピーは、身体のバランスやリラクゼーションを目的として行う施術です。医療行為ではなく、効果・反応には個人差があります。施術中に違和感や不快感を感じた場合は、無理をせず速やかにお申し出ください。</p>
+<p style="font-weight:600;margin-bottom:4px">■ 免責事項</p>
+<p style="margin-bottom:8px">私は、自身の健康状態について可能な範囲で正確に申告し、施術を自己責任のもとで受けることに同意します。また、施術後の体調変化について、必要に応じて医療機関を受診します。<br>当サロンは、故意または重大な過失がある場合を除き、施術後に生じた体調変化・損害等について責任を負いかねます。</p>
+<p style="font-weight:600;margin-bottom:4px">■ 個人情報について</p>
+<p style="margin-bottom:12px">ご記入いただいた個人情報は、施術・ご連絡・健康管理目的以外には使用いたしません。適切に管理し、第三者へ提供することはありません（法令に基づく場合を除く）。</p>
+<p style="text-align:center;font-size:12px;color:#999">── 以上、最後までお読みいただきありがとうございます ──</p>
+</div>
+<p style="font-size:12px;color:#888;margin-top:6px;text-align:center">↑ スクロールして全文をお読みください</p></div><label class="consent-check "><input type="checkbox" id="ly-consent" onchange="lyChkConsent()"><span class="consent-lbl">私は上記内容を確認し、理解した上で施術を受けることに同意します。</span></label><div style="margin-top:14px"><div class="fl" style="margin-bottom:6px">サイン（指でなぞってください）</div><div class="sig-wrap" id="ly-sig-wrap"><div class="sig-ph" id="ly-sig-ph">ここにサインしてください</div><canvas id="ly-sig-cv"></canvas></div><button class="sig-clear" onclick="clrSig('ly')">やり直す</button></div><div class="errmsg" id="ly-consent-err" style="margin-top:8px">同意のチェックとサインをお願いします</div></div><div class="brow"><button class="btn-s" onclick="lyNext(2)">← 戻る</button><button class="btn-p" id="ly-submit" onclick="lySubmit()" disabled>次へ（スタッフ確認）→</button></div></div>
+<div class="pg" id="ly-p4">
+<div class="staff-box">📋 <strong>スタッフの方へ</strong><br>お客様の記入が完了しました。以下の補足情報を入力して登録してください。</div><div class="fc"><div class="fch staff">がん治療歴</div><div class="fr1"><div class="fg"><label class="fl">がんの種類・部位（複数選択可）</label><div class="chip-row"><div class="chip" onclick="togC(this,'ly-cancer-type')">乳がん</div><div class="chip" onclick="togC(this,'ly-cancer-type')">子宮がん</div><div class="chip" onclick="togC(this,'ly-cancer-type')">卵巣がん</div><div class="chip" onclick="togC(this,'ly-cancer-type')">前立腺がん</div><div class="chip" onclick="togC(this,'ly-cancer-type')">膀胱がん</div><div class="chip" onclick="togC(this,'ly-cancer-type')">大腸がん</div><div class="chip" onclick="togC(this,'ly-cancer-type')">皮膚がん</div></div><input type="hidden" id="ly-cancer-type"><input class="fi" id="ly-cancer-other" placeholder="その他（自由記入）" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">治療内容（複数選択可）</label><div class="chip-row"><div class="chip" onclick="togC(this,'ly-treatment-type')">手術</div><div class="chip" onclick="togC(this,'ly-treatment-type')">放射線治療</div><div class="chip" onclick="togC(this,'ly-treatment-type')">化学療法（抗がん剤）</div><div class="chip" onclick="togC(this,'ly-treatment-type')">ホルモン療法</div><div class="chip" onclick="togC(this,'ly-treatment-type')">免疫療法</div></div><input type="hidden" id="ly-treatment-type"></div></div><div class="fr2"><div class="fg"><label class="fl">治療時期</label><input class="fi" id="ly-cancer-when" placeholder="例：2021年3月"></div><div class="fg"><label class="fl">治療状況</label><div class="chip-row"><div class="chip" onclick="selC('ly-cancer-status','治療終了',this)">治療終了</div><div class="chip" onclick="selC('ly-cancer-status','治療中',this)">治療中</div><div class="chip" onclick="selC('ly-cancer-status','経過観察中',this)">経過観察中</div></div><input type="hidden" id="ly-cancer-status"></div></div><div class="fr1"><div class="fg"><label class="fl">リンパ節郭清</label><div class="chip-row" id="ly-dissection-chips"><div class="chip" onclick="selC('ly-dissection','あり',this);document.getElementById('ly-dissection-wrap').style.display='block'">あり</div><div class="chip" onclick="selC('ly-dissection','なし',this);document.getElementById('ly-dissection-wrap').style.display='none'">なし</div><div class="chip" onclick="selC('ly-dissection','不明',this);document.getElementById('ly-dissection-wrap').style.display='none'">不明</div></div><input type="hidden" id="ly-dissection"><div id="ly-dissection-wrap" style="display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px"><div class="fl" style="margin-bottom:6px">郭清部位（複数選択可）</div><div class="chip-row" id="ly-dissection-site-chips"><div class="chip" onclick="togC(this,'ly-dissection-site')">腋窩（わきの下）</div><div class="chip" onclick="togC(this,'ly-dissection-site')">鼠径部（足の付け根）</div><div class="chip" onclick="togC(this,'ly-dissection-site')">骨盤内</div><div class="chip" onclick="togC(this,'ly-dissection-site')">傍大動脈</div></div><input type="hidden" id="ly-dissection-site"><input class="fi" id="ly-dissection-detail" placeholder="その他・詳細（自由記入）" style="margin-top:8px"></div></div></div><div class="fr1"><div class="fg"><label class="fl">主治医からの注意事項</label><textarea class="fta" id="ly-doctor-notes" placeholder="例：強い圧迫は避けること、患部への直接刺激は不可など"></textarea></div></div></div><div class="fc"><div class="fch staff">スタッフ補足情報</div><div class="fr2"><div class="fg"><label class="fl">患肢（カルテ用）</label><div class="chip-row"><div class="chip" onclick="selC('ly-limb-s','右上肢',this)">右上肢</div><div class="chip" onclick="selC('ly-limb-s','左上肢',this)">左上肢</div><div class="chip" onclick="selC('ly-limb-s','両上肢',this)">両上肢</div><div class="chip" onclick="selC('ly-limb-s','右下肢',this)">右下肢</div><div class="chip" onclick="selC('ly-limb-s','左下肢',this)">左下肢</div><div class="chip" onclick="selC('ly-limb-s','両下肢',this)">両下肢</div></div><input type="hidden" id="ly-limb-s"></div><div class="fg"><label class="fl">ステージ</label><select class="fsel" id="ly-stage"><option value="">—</option><option>Stage 0</option><option>Stage I</option><option>Stage II</option><option>Stage III</option></select></div></div><div class="fr1"><div class="fg"><label class="fl">蜂窩織炎の既往</label><div class="chip-row"><div class="chip" onclick="selC('ly-cellulitis','なし',this);document.getElementById('ly-cellulitis-wrap').style.display='none'">なし</div><div class="chip" onclick="selC('ly-cellulitis','あり',this);document.getElementById('ly-cellulitis-wrap').style.display='block'">あり</div></div><input type="hidden" id="ly-cellulitis"><div id="ly-cellulitis-wrap" style="display:none;margin-top:8px"><textarea class="fta" id="ly-cellulitis-detail" style="min-height:60px" placeholder="例：2回、直近は2023年6月ごろ など"></textarea></div></div></div><div class="fr1"><div class="fg"><label class="fl">仕事内容</label><div class="chip-row"><div class="chip" onclick="selC('ly-job','立ち仕事',this)">立ち仕事</div><div class="chip" onclick="selC('ly-job','デスクワーク',this)">デスクワーク</div></div><input type="hidden" id="ly-job"><input class="fi" id="ly-job-detail" placeholder="自由記載（例：看護師、教師、在宅勤務など）" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">スタッフメモ（内部用）</label><textarea class="fta" id="ly-staff-note" placeholder="施術上の注意点など（お客様には表示されません）"></textarea></div></div></div><div class="fc"><div class="fch staff">初回写真（任意）</div><div class="photo-grid" id="ly-photo-grid"></div><div class="photo-up" id="ly-photo-up"><input type="file" id="ly-photo-inp" accept="image/*" multiple onchange="addPhotos(this,'ly')"><div style="font-size:26px;margin-bottom:4px">📷</div><div style="font-size:13px;color:var(--wg)">写真を追加（最大6枚）</div></div></div><button class="btn-p staff" onclick="lyRegister()">✅ カルテに登録する</button></div></div></div>
+<div id="sc-reg-bi" class="screen">
+<div class="chdr bio"><div class="chdr-icon">🌱</div><div class="chdr-title">はじめまして</div><div class="chdr-sub">巡温バイオケアコース｜ご記入票</div></div>
+<div class="prog" id="bi-prog"><div class="prog-steps" id="bi-steps"></div></div>
+<div class="wrap">
+<div class="pg active" id="bi-p1">
+<div class="fc"><div class="fch bi">お客様情報</div><div class="fr2"><div class="fg"><label class="fl">お名前<span class="req">＊</span></label><input class="fi" id="bi-name" placeholder="鈴木 美咲"><div class="errmsg" id="bi-name-err">お名前をご記入ください</div></div><div class="fg"><label class="fl">フリガナ</label><input class="fi" id="bi-kana" placeholder="スズキ ミサキ"></div></div><div class="fr2"><div class="fg"><label class="fl">生年月日<span class="req">＊</span></label><input class="fi" id="bi-birth" type="date" onkeyup="limitBirthYear(this)" onchange="limitBirthYear(this)"><div class="errmsg" id="bi-birth-err">生年月日をご記入ください</div></div><div class="fg"><label class="fl">性別</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-gender','女性',this)">女性</div><div class="chip bio" onclick="selC('bi-gender','男性',this)">男性</div><div class="chip bio" onclick="selC('bi-gender','その他',this)">その他</div></div><input type="hidden" id="bi-gender"></div></div><div class="fr2"><div class="fg"><label class="fl">電話番号</label><input class="fi" id="bi-phone" type="tel" placeholder="090-0000-0000"></div><div class="fg"><label class="fl">1日の水分摂取量(ml)</label><input class="fi" id="bi-water" type="number" step="100" placeholder="例：1500"></div></div><div class="fr2"><div class="fg"><label class="fl">体重(kg)</label><input class="fi" id="bi-weight" type="number" step="0.1" placeholder="54.0"></div><div class="fg"><label class="fl">身長(cm)</label><input class="fi" id="bi-height" type="number" placeholder="162"></div></div></div><button class="btn-p bi" onclick="biNext(2)">次へ →</button></div>
+<div class="pg" id="bi-p2">
+<div class="fc"><div class="fch bi">健康・既往歴について</div><div class="fr1"><div class="fg"><label class="fl">高血圧・心疾患・糖尿病などはありますか？（複数選択可）</label><div class="chip-row" id="bi-cond-chips"><div class="chip bio" onclick="togC(this,'bi-conditions')">高血圧</div><div class="chip bio" onclick="togC(this,'bi-conditions')">心疾患</div><div class="chip bio" onclick="togC(this,'bi-conditions')">糖尿病</div><div class="chip bio" onclick="togC(this,'bi-conditions')">腎臓病</div><div class="chip bio" onclick="togC(this,'bi-conditions')">甲状腺疾患</div><div class="chip bio" onclick="togC(this,'bi-conditions')">骨粗しょう症</div><div class="chip bio" onclick="togC(this,'bi-conditions')">血栓症</div><div class="chip bio" onclick="togC(this,'bi-conditions')">てんかん</div><div class="chip bio" onclick="togC(this,'bi-conditions')">なし</div></div><input type="hidden" id="bi-conditions"><input class="fi" id="bi-conditions-other" placeholder="その他（自由記入）" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">持病・その他の既往歴</label><textarea class="fta" id="bi-history" placeholder="例：甲状腺の病気など&#10;特にない場合は「なし」"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">現在、飲んでいるお薬はありますか？</label><textarea class="fta" id="bi-meds" placeholder="例：降圧剤、ホルモン剤など&#10;特にない場合は「なし」"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">手術歴はありますか？</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-surgery','あり',this);document.getElementById('bi-surgery-wrap').style.display='block'">あり</div><div class="chip bio" onclick="selC('bi-surgery','なし',this);document.getElementById('bi-surgery-wrap').style.display='none'">なし</div></div><input type="hidden" id="bi-surgery"><div id="bi-surgery-wrap" style="display:none;margin-top:8px"><input class="fi" id="bi-surgery-detail" placeholder="例：胆のう摘出（2019年）、帝王切開（2015年）など"></div></div></div><div class="fr1"><div class="fg"><label class="fl">体内に金属が入っていますか？</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-metal','あり',this);document.getElementById('bi-metal-wrap').style.display='block'">あり</div><div class="chip bio" onclick="selC('bi-metal','なし',this);document.getElementById('bi-metal-wrap').style.display='none'">なし</div><div class="chip bio" onclick="selC('bi-metal','不明',this);document.getElementById('bi-metal-wrap').style.display='none'">不明</div></div><input type="hidden" id="bi-metal"><div id="bi-metal-wrap" style="display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px"><input class="fi" id="bi-metal-detail" placeholder="種類・挿入部位の詳細（例：右膝 チタン製スクリュー）" style="margin-top:8px"></div></div></div><div class="fr1"><div class="fg"><label class="fl">妊娠の可能性はありますか？</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-pregnancy','妊娠中',this)">妊娠中</div><div class="chip bio" onclick="selC('bi-pregnancy','可能性あり',this)">可能性あり</div><div class="chip bio" onclick="selC('bi-pregnancy','なし',this)">なし</div></div><input type="hidden" id="bi-pregnancy"></div></div><div class="fr1"><div class="fg"><label class="fl">アレルギーはありますか？</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-allergy-yn','あり',this);document.getElementById('bi-allergy-wrap').style.display='block'">あり</div><div class="chip bio" onclick="selC('bi-allergy-yn','なし',this);document.getElementById('bi-allergy-wrap').style.display='none'">なし</div></div><input type="hidden" id="bi-allergy-yn"><div id="bi-allergy-wrap" style="display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px"><div class="fl" style="margin-bottom:6px">アレルギーの種類（複数選択可）</div><div class="chip-row" id="bi-allergy-chips"><div class="chip bio" onclick="togC(this,'bi-allergy-types');togglePollenNote('bi-pollen-note','bi-allergy-chips')">花粉症</div><div class="chip bio" onclick="togC(this,'bi-allergy-types')">金属アレルギー</div><div class="chip bio" onclick="togC(this,'bi-allergy-types')">食物アレルギー</div><div class="chip bio" onclick="togC(this,'bi-allergy-types')">ハウスダスト</div><div class="chip bio" onclick="togC(this,'bi-allergy-types')">動物</div><div class="chip bio" onclick="togC(this,'bi-allergy-types')">薬剤</div></div><input type="hidden" id="bi-allergy-types"><div id="bi-pollen-note" style="display:none;margin-top:8px"><input class="fi" id="bi-pollen-detail" placeholder="花粉症の原因（例：スギ、ヒノキ、ブタクサなど）"></div><input class="fi" id="bi-allergy-other" placeholder="その他（自由記入）" style="margin-top:8px"></div></div></div></div><div class="brow"><button class="btn-s" onclick="biNext(1)">← 戻る</button><button class="btn-p bi" onclick="biNext(3)">次へ →</button></div></div>
+<div class="pg" id="bi-p3">
+<div class="fc"><div class="fch bi">気になる症状・お悩み</div><div class="fr1"><div class="fg"><label class="fl">いまお身体で気になっていること（複数選択できます）</label><div class="chip-row" id="bi-sym-chips"><div class="chip bio" onclick="togC(this,'bi-symptoms')">冷え</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">むくみ</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">疲れやすい</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">肩こり</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">腰痛</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">頭痛</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">眠れない・浅い</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">便秘</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">生理が不規則</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">生理痛・PMS</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">更年期の症状</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">体重が気になる</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">代謝が落ちた</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">風邪をひきやすい</div><div class="chip bio" onclick="togC(this,'bi-symptoms')">気分が落ち込む</div></div><input type="hidden" id="bi-symptoms"><input class="fi" id="bi-sym-other" placeholder="その他（自由記入）" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">来店のきっかけや、ご希望を教えてください</label><textarea class="fta" id="bi-goal" placeholder="例：冷え性を改善したい、なんとなく体がだるい…など"></textarea></div></div></div><div class="brow"><button class="btn-s" onclick="biNext(2)">← 戻る</button><button class="btn-p bi" onclick="biNext(4)">次へ →</button></div></div>
+<div class="pg" id="bi-p4">
+<div class="fc"><div class="fch bi">日ごろの生活</div><div class="fr1"><div class="fg"><label class="fl">食事のリズム</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-diet','三食規則正しく',this)">三食規則正しく</div><div class="chip bio" onclick="selC('bi-diet','不規則なことが多い',this)">不規則なことが多い</div><div class="chip bio" onclick="selC('bi-diet','外食が多い',this)">外食が多い</div><div class="chip bio" onclick="selC('bi-diet','食事を抜くことがある',this)">食事を抜くことがある</div></div><input type="hidden" id="bi-diet"></div></div><div class="fr1"><div class="fg"><label class="fl">睡眠について（複数選択可）</label><div class="chip-row"><div class="chip bio" onclick="togC(this,'bi-sleep')">よく眠れている</div><div class="chip bio" onclick="togC(this,'bi-sleep')">眠りが浅い</div><div class="chip bio" onclick="togC(this,'bi-sleep')">寝つきが悪い</div><div class="chip bio" onclick="togC(this,'bi-sleep')">睡眠時間が短い</div><div class="chip bio" onclick="togC(this,'bi-sleep')">夜中に目が覚める</div></div><input type="hidden" id="bi-sleep"></div></div><div class="fr1"><div class="fg"><label class="fl">運動の習慣</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-exercise','週3回以上',this)">週3回以上</div><div class="chip bio" onclick="selC('bi-exercise','週1〜2回程度',this)">週1〜2回程度</div><div class="chip bio" onclick="selC('bi-exercise','ほとんどしない',this)">ほとんどしない</div></div><input type="hidden" id="bi-exercise"></div></div><div class="fr1"><div class="fg"><label class="fl">最近のストレス</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-stress','あまりない',this)">あまりない</div><div class="chip bio" onclick="selC('bi-stress','ふつう',this)">ふつう</div><div class="chip bio" onclick="selC('bi-stress','多め',this)">多め</div><div class="chip bio" onclick="selC('bi-stress','かなり多い',this)">かなり多い</div></div><input type="hidden" id="bi-stress"></div></div><div class="fr2"><div class="fg"><label class="fl">お酒</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-alcohol','飲まない',this)">飲まない</div><div class="chip bio" onclick="selC('bi-alcohol','たまに',this)">たまに</div><div class="chip bio" onclick="selC('bi-alcohol','ほぼ毎日',this)">ほぼ毎日</div></div><input type="hidden" id="bi-alcohol"></div><div class="fg"><label class="fl">タバコ</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-smoke','吸わない',this)">吸わない</div><div class="chip bio" onclick="selC('bi-smoke','以前吸っていた',this)">以前吸っていた</div><div class="chip bio" onclick="selC('bi-smoke','吸う',this)">吸う</div></div><input type="hidden" id="bi-smoke"></div></div></div><div class="fc"><div class="fch bi">生理・ホルモンについて <span style="font-size:11px;color:var(--wg)">（女性の方・任意）</span></div><div class="fr1"><div class="fg"><label class="fl">生理の状態</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-period','規則的',this)">規則的</div><div class="chip bio" onclick="selC('bi-period','不規則',this)">不規則</div><div class="chip bio" onclick="selC('bi-period','閉経した',this)">閉経した</div><div class="chip bio" onclick="selC('bi-period','答えたくない',this)">答えたくない</div></div><input type="hidden" id="bi-period"></div></div><div class="fr1"><div class="fg"><label class="fl">更年期の症状</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-meno','あり',this)">あり</div><div class="chip bio" onclick="selC('bi-meno','なし',this)">なし</div></div><input type="hidden" id="bi-meno"></div></div><div class="fr1"><div class="fg"><label class="fl">ホルモン療法・ピルの使用</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-hormone','使っている',this)">使っている</div><div class="chip bio" onclick="selC('bi-hormone','以前使っていた',this)">以前使っていた</div><div class="chip bio" onclick="selC('bi-hormone','使っていない',this)">使っていない</div></div><input type="hidden" id="bi-hormone"></div></div></div><div class="fc"><div class="fch bi">スタッフへのメッセージ</div><div class="fr1"><div class="fg"><label class="fl">気になること、伝えたいことがあればどうぞ</label><textarea class="fta" id="bi-notes" placeholder="なんでもお気軽に…"></textarea></div></div></div><div class="brow"><button class="btn-s" onclick="biNext(3)">← 戻る</button><button class="btn-p bi" onclick="biNext(5)">次へ →</button></div></div>
+<div class="pg" id="bi-p5">
+<div class="fc"><div class="fch bi">ご記入内容の確認</div><div id="bi-confirm" style="font-size:13px;line-height:1.9"></div></div><div class="fc"><div class="fch bi">ご同意とサイン</div><div class="consent-box bi"><div style="font-size:13px;line-height:1.85;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid rgba(0,0,0,.08);border-radius:8px;padding:12px">
+<p style="font-weight:600;font-size:14px;margin-bottom:8px">施術同意書</p>
+<p style="margin-bottom:8px">当サロンでは、お客様に安心して施術を受けていただくため、事前に内容をご確認いただいております。以下をご理解・ご同意の上、ご署名をお願いいたします。</p>
+<p style="font-weight:600;margin-bottom:4px">■ 施術について</p>
+<p style="margin-bottom:6px">当サロンでは、バイオテラピーおよびリンパ浮腫ケアを含む身体のメンテナンス・リラクゼーションを目的とした施術を行っております。</p>
+<p style="margin-bottom:6px">施術は医療行為・治療行為ではなく、疾病の診断・治療・完治を目的としたものではありません。現在通院中の方、治療中の方、服薬中の方は、必要に応じて主治医へご相談の上ご利用ください。</p>
+<p style="font-weight:600;margin-bottom:4px">以下に該当する方は事前にお申し出ください</p>
+<ul style="margin:0 0 6px 16px;line-height:2.0">
+<li>妊娠中、または妊娠の可能性がある方</li>
+<li>発熱、感染症、体調不良のある方</li>
+<li>重度の心疾患・腎疾患・肝疾患のある方</li>
+<li>血栓症、静脈炎の既往がある方</li>
+<li>がん治療中、または治療後間もない方</li>
+<li>骨折・捻挫・炎症・外傷のある方</li>
+<li>ペースメーカー等医療機器をご使用の方</li>
+<li>強い痛みや皮膚トラブルのある方</li>
+<li>医師よりマッサージ等を制限されている方</li>
+<li>その他、施術に不安のある方</li>
+</ul>
+<p style="margin-bottom:8px;font-size:12px;color:#666">※状態によっては施術をお断り、または内容を変更させていただく場合がございます。</p>
+<p style="font-weight:600;margin-bottom:4px">■ リンパ浮腫ケアについて</p>
+<p style="margin-bottom:8px">リンパ浮腫ケアは、浮腫の軽減や循環のサポート、日常生活の快適性向上を目的として行います。効果の感じ方には個人差があり、施術効果を保証するものではありません。施術後、一時的にだるさ・眠気・排尿回数の増加などが起こる場合があります。</p>
+<p style="font-weight:600;margin-bottom:4px">■ バイオテラピーについて</p>
+<p style="margin-bottom:8px">バイオテラピーは、身体のバランスやリラクゼーションを目的として行う施術です。医療行為ではなく、効果・反応には個人差があります。施術中に違和感や不快感を感じた場合は、無理をせず速やかにお申し出ください。</p>
+<p style="font-weight:600;margin-bottom:4px">■ 免責事項</p>
+<p style="margin-bottom:8px">私は、自身の健康状態について可能な範囲で正確に申告し、施術を自己責任のもとで受けることに同意します。また、施術後の体調変化について、必要に応じて医療機関を受診します。<br>当サロンは、故意または重大な過失がある場合を除き、施術後に生じた体調変化・損害等について責任を負いかねます。</p>
+<p style="font-weight:600;margin-bottom:4px">■ 個人情報について</p>
+<p style="margin-bottom:12px">ご記入いただいた個人情報は、施術・ご連絡・健康管理目的以外には使用いたしません。適切に管理し、第三者へ提供することはありません（法令に基づく場合を除く）。</p>
+<p style="text-align:center;font-size:12px;color:#999">── 以上、最後までお読みいただきありがとうございます ──</p>
+</div>
+<p style="font-size:12px;color:#888;margin-top:6px;text-align:center">↑ スクロールして全文をお読みください</p></div><label class="consent-check bi"><input type="checkbox" id="bi-consent" onchange="biChkConsent()"><span class="consent-lbl">私は上記内容を確認し、理解した上で施術を受けることに同意します。</span></label><div style="margin-top:14px"><div class="fl" style="margin-bottom:6px">サイン（指でなぞってください）</div><div class="sig-wrap" id="bi-sig-wrap"><div class="sig-ph" id="bi-sig-ph">ここにサインしてください</div><canvas id="bi-sig-cv"></canvas></div><button class="sig-clear" onclick="clrSig('bi')">やり直す</button></div><div class="errmsg" id="bi-consent-err" style="margin-top:8px">同意のチェックとサインをお願いします</div></div><div class="brow"><button class="btn-s" onclick="biNext(4)">← 戻る</button><button class="btn-p bi" id="bi-submit" onclick="biSubmit()" disabled>次へ（スタッフ確認）→</button></div></div>
+<div class="pg" id="bi-p6">
+<div class="staff-box">📋 <strong>スタッフの方へ</strong><br>お客様の記入が完了しました。以下の補足情報を入力して登録してください。</div><div class="fc"><div class="fch staff">スタッフ補足情報</div><div class="fr1"><div class="fg"><label class="fl">スタッフが気になる症状（複数選択可）</label><div class="chip-row"><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">冷え</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">むくみ</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">肩こり</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">腰痛</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">頭痛</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">生理関連</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">更年期症状</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">排便状況</div><div class="chip bio" onclick="togC(this,'bi-staff-symptoms')">自律神経の乱れ</div></div><input type="hidden" id="bi-staff-symptoms"></div></div><div class="fr1"><div class="fg"><label class="fl">仕事内容</label><div class="chip-row"><div class="chip bio" onclick="selC('bi-job','立ち仕事',this)">立ち仕事</div><div class="chip bio" onclick="selC('bi-job','デスクワーク',this)">デスクワーク</div></div><input type="hidden" id="bi-job"><input class="fi" id="bi-job-detail" placeholder="自由記載（例：看護師、教師、在宅勤務など）" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">スタッフメモ（内部用）</label><textarea class="fta" id="bi-staff-note" placeholder="施術上の注意点など（お客様には表示されません）"></textarea></div></div></div><button class="btn-p staff" onclick="biRegister()">✅ カルテに登録する</button>
+</div></div></div>
+<div id="sc-detail" class="screen"><div class="wrap">
+<div id="print-header"><div style="text-align:center;padding:12px 0 16px;border-bottom:2px solid var(--sage);margin-bottom:18px"><div style="font-size:13px;color:var(--wg);letter-spacing:.18em;margin-bottom:6px">Lierre</div><div style="font-family:'Noto Serif JP',serif;font-size:24px;font-weight:500;margin-bottom:10px" id="ph-name"></div><div style="display:inline-flex;gap:24px;font-size:13px;color:#555;background:#f5f5f0;border-radius:8px;padding:8px 20px"><div><span style="color:var(--wg);font-size:11px;display:block">来店回数</span><span id="ph-count" style="font-weight:600"></span></div><div style="width:1px;background:var(--border)"></div><div><span style="color:var(--wg);font-size:11px;display:block">ご利用期間</span><span id="ph-period" style="font-weight:600"></span></div></div></div><div style="font-size:11px;color:#bbb;text-align:right;margin-bottom:10px" id="ph-date"></div></div>
+<div class="print-hide" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><button class="back" onclick="go('list')" style="margin-bottom:0">← 一覧に戻る</button><button class="tbtn" style="background:none;border:1.5px solid var(--border);color:var(--wg);font-size:12px" onclick="deletePt()">🗑 削除</button></div>
+<div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:3px" class="print-hide"><div class="stitle" id="d-name"></div><span id="d-badge"></span></div>
+<div id="d-meta" class="print-hide" style="font-size:12px;color:var(--wg);margin-bottom:14px"></div>
+<div class="fc print-hide" id="d-info-fc"><div class="fch" id="d-info-t">初回情報</div><div class="ig" id="d-ig"></div>
+<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="tbtn" style="background:none;border:1.5px solid var(--border);color:var(--wg);font-size:12px" onclick="toggleSig()">📋 同意書を確認</button><button class="tbtn" style="background:none;border:1.5px solid var(--border);color:var(--wg);font-size:12px" onclick="openEditPt()">✏️ 初回情報を編集</button></div>
+<div id="d-sig-wrap" style="display:none;margin-top:12px"><div class="fl" style="margin-bottom:6px">同意書サイン（初回登録時）</div><div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden;background:var(--cream);min-height:60px;display:flex;align-items:center;justify-content:center"><img id="d-sig-img" src="" alt="サイン" style="max-width:100%;display:none"><div id="d-sig-none" style="color:var(--border);font-size:13px;padding:20px">サインデータがありません</div></div></div>
+</div>
+<div class="fc print-hide" id="d-photos-fc" style="display:none"><div class="fch">初回写真</div><div class="photo-grid" id="d-photos-grid"></div></div>
+<div class="sh print-hide"><div class="stitle" style="font-size:15px">来店記録</div><div style="display:flex;gap:6px"><button class="tbtn" onclick="exportPDF()" style="font-size:12px">🖨 PDF出力</button><button class="tbtn" id="d-add-btn" onclick="openAddVisit()">＋ 記録を追加</button></div></div>
+<div id="charts-sec" style="display:none"><div class="chart-wrap"><div class="chart-title">📊 体温の推移</div><canvas id="temp-chart"></canvas></div><div id="circ-cw" class="chart-wrap" style="display:none"><div class="chart-title">📏 周径の推移</div><canvas id="circ-chart"></canvas></div><div id="ly-weight-cw" class="chart-wrap" style="display:none"><div class="chart-title">⚖️ 体重の推移</div><canvas id="ly-weight-chart"></canvas></div><div id="bio-cw" class="chart-wrap" style="display:none"><div class="chart-title">⚖️ 体重の推移</div><canvas id="bio-chart"></canvas></div><div id="fat-cw" class="chart-wrap" style="display:none"><div class="chart-title">📉 体脂肪率の推移</div><canvas id="fat-chart"></canvas></div></div>
+<div id="visit-list"></div>
+</div></div>
+<div id="sc-visit" class="screen"><div class="wrap"><button class="back" id="av-back">← 戻る</button><div class="stitle" style="margin-bottom:2px">来店記録</div><div id="av-pname" style="font-size:13px;color:var(--wg);margin-bottom:14px"></div><div class="fc"><div class="fch" id="av-t1">バイタル</div><div class="fr2"><div class="fg"><label class="fl">来店日</label><input class="fi" id="v-date" type="date"></div><div class="fg"><label class="fl">体温(℃)<span class="req">＊</span></label><div class="stepper" id="v-temp-stepper"><button type="button" class="step-btn" onclick="stepField('v-temp',-0.1,34,42,1)">−</button><input class="step-input" id="v-temp" type="number" step="0.1" value="36.0" oninput="syncStepper('v-temp',1)"><button type="button" class="step-btn" onclick="stepField('v-temp',0.1,34,42,1)">＋</button></div></div></div><div class="fr2"><div class="fg"><label class="fl">体重(kg)</label><div class="stepper"><button type="button" class="step-btn" onclick="stepField('v-weight',-0.1,20,200,1)">−</button><input class="step-input" id="v-weight" type="number" step="0.1" oninput="syncStepper('v-weight',1)"><button type="button" class="step-btn" onclick="stepField('v-weight',0.1,20,200,1)">＋</button></div></div><div class="fg"><label class="fl">水分摂取量(ml)</label><div class="stepper"><button type="button" class="step-btn" onclick="stepField('v-water',-100,0,5000,0)">−</button><input class="step-input" id="v-water" type="number" step="100" oninput="syncStepper('v-water',0)"><button type="button" class="step-btn" onclick="stepField('v-water',100,0,5000,0)">＋</button></div></div></div><div id="v-weight-prev-note" style="display:none"><div style="font-size:11px;color:var(--wg)" id="v-prev-label"></div></div></div><div class="fc"><div class="fch" id="av-t2">本日の体調</div><div class="fr1"><div class="fg"><label class="fl">症状・体調（複数選択可）</label><div class="chip-row" id="v-cond-chips"><div class="chip" onclick="togC(this,'v-cond')">肩こり</div><div class="chip" onclick="togC(this,'v-cond')">腰痛</div><div class="chip" onclick="togC(this,'v-cond')">頭痛</div><div class="chip" onclick="togC(this,'v-cond')">寝不足</div><div class="chip" onclick="togC(this,'v-cond')">疲労感</div><div class="chip" onclick="togC(this,'v-cond')">冷え</div><div class="chip" onclick="togC(this,'v-cond')">むくみ</div><div class="chip" onclick="togC(this,'v-cond')">生理中</div><div class="chip" onclick="togC(this,'v-cond')">ストレス大</div><div class="chip" onclick="togC(this,'v-cond')">自律神経の乱れ</div><div class="chip" onclick="togC(this,'v-cond')">体調良好</div></div><input type="hidden" id="v-cond"></div></div><div class="fr1"><div class="fg"><label class="fl">体調メモ</label><textarea class="fta" id="v-cond-note" style="min-height:55px"></textarea></div></div></div><div class="fc" id="v-circ-card" style="display:none"><div class="fch">周径測定(cm)</div><div id="v-circ-tables"></div></div><div id="v-bio-sec" style="display:none"><div class="fc"><div class="fch bi">受けたコース（複数選択可）</div><div class="fr1"><div class="chip-row" id="v-course-chips"><div class="chip" onclick="togC(this,'v-course')">バイオケア60分</div><div class="chip" onclick="togC(this,'v-course')">バイオケア90分</div><div class="chip" onclick="togC(this,'v-course')">バイオケア120分</div><div class="chip" onclick="togC(this,'v-course')">お悩みケア</div><div class="chip" onclick="togC(this,'v-course')">バイオサーモ40分</div><div class="chip" onclick="togC(this,'v-course')">バイオサーモ60分</div><div class="chip" onclick="togC(this,'v-course')">リンパ60分</div><div class="chip" onclick="togC(this,'v-course')">リンパ120分</div><div class="chip" onclick="togC(this,'v-course')">ヘッド</div></div><input type="hidden" id="v-course"></div></div><div class="fc"><div class="fch bi">体組成（任意）</div><div class="fr3"><div class="fg"><label class="fl">体脂肪率(%)</label><div class="stepper"><button type="button" class="step-btn" onclick="stepField('v-fat',-0.1,1,60,1)">−</button><input class="step-input" id="v-fat" type="number" step="0.1" oninput="syncStepper('v-fat',1)"><button type="button" class="step-btn" onclick="stepField('v-fat',0.1,1,60,1)">＋</button></div></div><div class="fg"><label class="fl">筋肉量(kg)</label><div class="stepper"><button type="button" class="step-btn" onclick="stepField('v-muscle',-0.1,1,100,1)">−</button><input class="step-input" id="v-muscle" type="number" step="0.1" oninput="syncStepper('v-muscle',1)"><button type="button" class="step-btn" onclick="stepField('v-muscle',0.1,1,100,1)">＋</button></div></div><div class="fg"><label class="fl">基礎代謝(kcal)</label><div class="stepper"><button type="button" class="step-btn" onclick="stepField('v-bmr',-10,500,5000,0)">−</button><input class="step-input" id="v-bmr" type="number" step="10" oninput="syncStepper('v-bmr',0)"><button type="button" class="step-btn" onclick="stepField('v-bmr',10,500,5000,0)">＋</button></div></div></div></div><div class="fc"><div class="fch bi">ビフォー・アフター写真</div><div class="fr2"><div class="fg"><label class="fl">施術前</label><div id="v-before-prev" style="display:none" class="pt-wrap"><img id="v-before-img" src="" onclick="lbox(window._vB,'施術前')"><div class="pt-lbl">Before</div><button class="pt-del" onclick="delVP('before',event)">✕</button></div><div class="photo-up bi" id="v-before-area"><input type="file" id="v-before-inp" accept="image/*" onchange="setVPhoto(this,'before')"><div style="font-size:22px;margin-bottom:3px">📷</div><div style="font-size:12px;color:var(--wg)">施術前</div></div></div><div class="fg"><label class="fl">施術後</label><div id="v-after-prev" style="display:none" class="pt-wrap"><img id="v-after-img" src="" onclick="lbox(window._vA,'施術後')"><div class="pt-lbl">After</div><button class="pt-del" onclick="delVP('after',event)">✕</button></div><div class="photo-up bi" id="v-after-area"><input type="file" id="v-after-inp" accept="image/*" onchange="setVPhoto(this,'after')"><div style="font-size:22px;margin-bottom:3px">📷</div><div style="font-size:12px;color:var(--wg)">施術後</div></div></div></div></div></div><div class="fc"><div class="fch" id="av-t3">施術メモ</div><div class="fr1"><div class="fg"><label class="fl">施術記録</label><textarea class="fta" id="v-treatment"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">お客様の感想・反応</label><textarea class="fta" id="v-reaction" style="min-height:55px"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">次回への申し送り</label><textarea class="fta" id="v-next" style="min-height:55px"></textarea></div></div></div><div class="brow"><button class="btn-s" id="v-cancel">キャンセル</button><button class="btn-p" id="v-save" onclick="saveVisit()">記録を保存</button></div></div></div>
+<div id="sc-edit-ly" class="screen"><div class="wrap"><button class="back" onclick="openPt(curId)">← 戻る</button><div class="stitle" style="margin-bottom:16px">🌿 初回情報を編集</div><div class="fc"><div class="fch">基本情報</div><div class="fr2"><div class="fg"><label class="fl">お名前</label><input class="fi" id="ep-ly-name"></div><div class="fg"><label class="fl">フリガナ</label><input class="fi" id="ep-ly-kana"></div></div><div class="fr2"><div class="fg"><label class="fl">生年月日</label><input class="fi" id="ep-ly-birth" type="date" onkeyup="limitBirthYear(this)" onchange="limitBirthYear(this)"></div><div class="fg"><label class="fl">電話番号</label><input class="fi" id="ep-ly-phone" type="tel"></div></div><div class="fr3"><div class="fg"><label class="fl">体重(kg)</label><input class="fi" id="ep-ly-weight" type="number" step="0.1"></div><div class="fg"><label class="fl">身長(cm)</label><input class="fi" id="ep-ly-height" type="number"></div><div class="fg"><label class="fl">水分摂取量(ml)</label><input class="fi" id="ep-ly-water" type="number" step="100"></div></div></div><div class="fc"><div class="fch">既往歴・健康状態</div><div class="fr1"><div class="fg"><label class="fl">高血圧・心疾患・糖尿病など（複数選択可）</label><div class="chip-row" id="ep-ly-cond-chips"><div class="chip" onclick="togC(this,'ep-ly-conditions')">高血圧</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">心疾患</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">糖尿病</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">腎臓病</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">甲状腺疾患</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">骨粗しょう症</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">血栓症</div><div class="chip" onclick="togC(this,'ep-ly-conditions')">なし</div></div><input type="hidden" id="ep-ly-conditions"><input class="fi" id="ep-ly-conditions-other" placeholder="その他" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">通院状況</label><div class="chip-row" id="ep-ly-clinic-chips"><div class="chip" onclick="selC('ep-ly-clinic','通院中',this)">通院中</div><div class="chip" onclick="selC('ep-ly-clinic','していない',this)">していない</div></div><input type="hidden" id="ep-ly-clinic"></div></div><div class="fr1"><div class="fg"><label class="fl">服用薬</label><textarea class="fta" id="ep-ly-meds"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">その他の既往歴</label><textarea class="fta" id="ep-ly-history"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">アレルギー</label><div class="chip-row" id="ep-ly-allergy-yn-chips"><div class="chip" onclick="selC('ep-ly-allergy-yn','あり',this);document.getElementById('ep-ly-allergy-wrap').style.display='block'">あり</div><div class="chip" onclick="selC('ep-ly-allergy-yn','なし',this);document.getElementById('ep-ly-allergy-wrap').style.display='none'">なし</div></div><input type="hidden" id="ep-ly-allergy-yn"><div id="ep-ly-allergy-wrap" style="display:none;margin-top:8px"><input class="fi" id="ep-ly-allergy" placeholder="例：金属アレルギーなど"></div></div></div></div><div class="fc"><div class="fch">むくみ情報</div><div class="fr1"><div class="fg"><label class="fl">発症時期</label><input class="fi" id="ep-ly-onset" placeholder="例：2021年10月ごろ"></div></div><div class="fr1"><div class="fg"><label class="fl">原因</label><div class="chip-row" id="ep-ly-cause-chips"><div class="chip" onclick="selC('ep-ly-cause','手術後から',this)">手術後から</div><div class="chip" onclick="selC('ep-ly-cause','放射線治療後から',this)">放射線治療後から</div><div class="chip" onclick="selC('ep-ly-cause','もともとむくみやすい',this)">もともとむくみやすい</div><div class="chip" onclick="selC('ep-ly-cause','わからない',this)">わからない</div></div><input type="hidden" id="ep-ly-cause"></div></div><div class="fr2"><div class="fg"><label class="fl">担当医</label><input class="fi" id="ep-ly-doctor"></div><div class="fg"><label class="fl">病院名</label><input class="fi" id="ep-ly-hospital"></div></div></div><div class="fc"><div class="fch staff">がん治療歴</div><div class="fr1"><div class="fg"><label class="fl">がんの種類（複数選択可）</label><div class="chip-row" id="ep-ly-cancer-chips"><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">乳がん</div><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">子宮がん</div><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">卵巣がん</div><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">前立腺がん</div><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">膀胱がん</div><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">大腸がん</div><div class="chip" onclick="togC(this,'ep-ly-cancer-type')">皮膚がん</div></div><input type="hidden" id="ep-ly-cancer-type"><input class="fi" id="ep-ly-cancer-other" placeholder="その他" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">治療内容（複数選択可）</label><div class="chip-row" id="ep-ly-treatment-chips"><div class="chip" onclick="togC(this,'ep-ly-treatment-type')">手術</div><div class="chip" onclick="togC(this,'ep-ly-treatment-type')">放射線治療</div><div class="chip" onclick="togC(this,'ep-ly-treatment-type')">化学療法（抗がん剤）</div><div class="chip" onclick="togC(this,'ep-ly-treatment-type')">ホルモン療法</div><div class="chip" onclick="togC(this,'ep-ly-treatment-type')">免疫療法</div></div><input type="hidden" id="ep-ly-treatment-type"></div></div><div class="fr2"><div class="fg"><label class="fl">治療時期</label><input class="fi" id="ep-ly-cancer-when" placeholder="例：2021年3月"></div><div class="fg"><label class="fl">治療状況</label><div class="chip-row" id="ep-ly-cancer-status-chips"><div class="chip" onclick="selC('ep-ly-cancer-status','治療終了',this)">治療終了</div><div class="chip" onclick="selC('ep-ly-cancer-status','治療中',this)">治療中</div><div class="chip" onclick="selC('ep-ly-cancer-status','経過観察中',this)">経過観察中</div></div><input type="hidden" id="ep-ly-cancer-status"></div></div><div class="fr1"><div class="fg"><label class="fl">リンパ節郭清</label><div class="chip-row" id="ep-ly-dissection-chips"><div class="chip" onclick="selC('ep-ly-dissection','あり',this);document.getElementById('ep-ly-dissection-wrap').style.display='block'">あり</div><div class="chip" onclick="selC('ep-ly-dissection','なし',this);document.getElementById('ep-ly-dissection-wrap').style.display='none'">なし</div><div class="chip" onclick="selC('ep-ly-dissection','不明',this);document.getElementById('ep-ly-dissection-wrap').style.display='none'">不明</div></div><input type="hidden" id="ep-ly-dissection"><div id="ep-ly-dissection-wrap" style="display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px"><div class="fl" style="margin-bottom:6px">郭清部位（複数選択可）</div><div class="chip-row" id="ep-ly-dissection-site-chips"><div class="chip" onclick="togC(this,'ep-ly-dissection-site')">腋窩（わきの下）</div><div class="chip" onclick="togC(this,'ep-ly-dissection-site')">鼠径部（足の付け根）</div><div class="chip" onclick="togC(this,'ep-ly-dissection-site')">骨盤内</div><div class="chip" onclick="togC(this,'ep-ly-dissection-site')">傍大動脈</div></div><input type="hidden" id="ep-ly-dissection-site"><input class="fi" id="ep-ly-dissection-detail" placeholder="その他・詳細（自由記入）" style="margin-top:8px"></div></div></div><div class="fr1"><div class="fg"><label class="fl">主治医からの注意事項</label><textarea class="fta" id="ep-ly-doctor-notes"></textarea></div></div></div><div class="fc"><div class="fch staff">スタッフ情報</div><div class="fr2"><div class="fg"><label class="fl">患肢</label><div class="chip-row" id="ep-ly-limb-s-chips"><div class="chip" onclick="selC('ep-ly-limb-s','右上肢',this)">右上肢</div><div class="chip" onclick="selC('ep-ly-limb-s','左上肢',this)">左上肢</div><div class="chip" onclick="selC('ep-ly-limb-s','両上肢',this)">両上肢</div><div class="chip" onclick="selC('ep-ly-limb-s','右下肢',this)">右下肢</div><div class="chip" onclick="selC('ep-ly-limb-s','左下肢',this)">左下肢</div><div class="chip" onclick="selC('ep-ly-limb-s','両下肢',this)">両下肢</div></div><input type="hidden" id="ep-ly-limb-s"></div><div class="fg"><label class="fl">ステージ</label><select class="fsel" id="ep-ly-stage"><option value="">—</option><option>Stage 0</option><option>Stage I</option><option>Stage II</option><option>Stage III</option></select></div></div><div class="fr1"><div class="fg"><label class="fl">蜂窩織炎の既往</label><div class="chip-row" id="ep-ly-cellulitis-yn-chips"><div class="chip" onclick="selC('ep-ly-cellulitis-yn','なし',this);document.getElementById('ep-ly-cellulitis-wrap').style.display='none'">なし</div><div class="chip" onclick="selC('ep-ly-cellulitis-yn','あり',this);document.getElementById('ep-ly-cellulitis-wrap').style.display='block'">あり</div></div><input type="hidden" id="ep-ly-cellulitis-yn"><div id="ep-ly-cellulitis-wrap" style="display:none;margin-top:8px"><textarea class="fta" id="ep-ly-cellulitis-detail" style="min-height:55px" placeholder="例：2回、直近は2023年6月ごろ"></textarea></div></div></div><div class="fr1"><div class="fg"><label class="fl">仕事内容</label><div class="chip-row" id="ep-ly-job-chips"><div class="chip" onclick="selC('ep-ly-job','立ち仕事',this)">立ち仕事</div><div class="chip" onclick="selC('ep-ly-job','デスクワーク',this)">デスクワーク</div></div><input type="hidden" id="ep-ly-job"><input class="fi" id="ep-ly-job-detail" placeholder="自由記載" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">スタッフメモ</label><textarea class="fta" id="ep-ly-staff-note"></textarea></div></div></div><div class="fr1"><div class="fg"><label class="fl">お客様メモ</label><textarea class="fta" id="ep-ly-notes"></textarea></div></div><div class="brow" style="margin-top:8px"><button class="btn-s" onclick="openPt(curId)">キャンセル</button><button class="btn-p" onclick="saveEditPt('ly')">✅ 保存する</button></div></div></div>
+<div id="sc-edit-bi" class="screen"><div class="wrap"><button class="back" onclick="openPt(curId)">← 戻る</button><div class="stitle" style="margin-bottom:16px">🌱 初回情報を編集</div><div class="fc"><div class="fch bi">基本情報</div><div class="fr2"><div class="fg"><label class="fl">お名前</label><input class="fi" id="ep-bi-name"></div><div class="fg"><label class="fl">フリガナ</label><input class="fi" id="ep-bi-kana"></div></div><div class="fr2"><div class="fg"><label class="fl">生年月日</label><input class="fi" id="ep-bi-birth" type="date" onkeyup="limitBirthYear(this)" onchange="limitBirthYear(this)"></div><div class="fg"><label class="fl">電話番号</label><input class="fi" id="ep-bi-phone" type="tel"></div></div><div class="fr3"><div class="fg"><label class="fl">体重(kg)</label><input class="fi" id="ep-bi-weight" type="number" step="0.1"></div><div class="fg"><label class="fl">身長(cm)</label><input class="fi" id="ep-bi-height" type="number"></div><div class="fg"><label class="fl">水分摂取量(ml)</label><input class="fi" id="ep-bi-water" type="number" step="100"></div></div></div><div class="fc"><div class="fch bi">健康・既往歴</div><div class="fr1"><div class="fg"><label class="fl">高血圧・心疾患・糖尿病など（複数選択可）</label><div class="chip-row" id="ep-bi-cond-chips"><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">高血圧</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">心疾患</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">糖尿病</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">腎臓病</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">甲状腺疾患</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">骨粗しょう症</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">血栓症</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">てんかん</div><div class="chip bio" onclick="togC(this,'ep-bi-conditions')">なし</div></div><input type="hidden" id="ep-bi-conditions"><input class="fi" id="ep-bi-conditions-other" placeholder="その他" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">持病・その他の既往歴</label><textarea class="fta" id="ep-bi-history"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">常用薬</label><textarea class="fta" id="ep-bi-meds"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">手術歴</label><div class="chip-row"><div class="chip bio" onclick="selC('ep-bi-surgery','あり',this);document.getElementById('ep-bi-surgery-wrap').style.display='block'">あり</div><div class="chip bio" onclick="selC('ep-bi-surgery','なし',this);document.getElementById('ep-bi-surgery-wrap').style.display='none'">なし</div></div><input type="hidden" id="ep-bi-surgery"><div id="ep-bi-surgery-wrap" style="display:none;margin-top:8px"><input class="fi" id="ep-bi-surgery-detail" placeholder="例：胆のう摘出（2019年）、帝王切開（2015年）など"></div></div></div><div class="fr1"><div class="fg"><label class="fl">体内金属</label><div class="chip-row"><div class="chip bio" onclick="selC('ep-bi-metal','あり',this);document.getElementById('ep-bi-metal-wrap').style.display='block'">あり</div><div class="chip bio" onclick="selC('ep-bi-metal','なし',this);document.getElementById('ep-bi-metal-wrap').style.display='none'">なし</div><div class="chip bio" onclick="selC('ep-bi-metal','不明',this);document.getElementById('ep-bi-metal-wrap').style.display='none'">不明</div></div><input type="hidden" id="ep-bi-metal"><div id="ep-bi-metal-wrap" style="display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px"><input class="fi" id="ep-bi-metal-detail" placeholder="種類・挿入部位の詳細（例：右膝 チタン製スクリュー）" style="margin-top:8px"></div></div></div><div class="fr1"><div class="fg"><label class="fl">妊娠の可能性</label><div class="chip-row" id="ep-bi-pregnancy-chips"><div class="chip bio" onclick="selC('ep-bi-pregnancy','妊娠中',this)">妊娠中</div><div class="chip bio" onclick="selC('ep-bi-pregnancy','可能性あり',this)">可能性あり</div><div class="chip bio" onclick="selC('ep-bi-pregnancy','なし',this)">なし</div></div><input type="hidden" id="ep-bi-pregnancy"></div></div><div class="fr1"><div class="fg"><label class="fl">アレルギー</label><div class="chip-row"><div class="chip bio" onclick="selC('ep-bi-allergy-yn','あり',this);document.getElementById('ep-bi-allergy-wrap').style.display='block'">あり</div><div class="chip bio" onclick="selC('ep-bi-allergy-yn','なし',this);document.getElementById('ep-bi-allergy-wrap').style.display='none'">なし</div></div><input type="hidden" id="ep-bi-allergy-yn"><div id="ep-bi-allergy-wrap" style="display:none;margin-top:10px;padding:12px;background:var(--cream);border-radius:8px"><div class="fl" style="margin-bottom:6px">アレルギーの種類（複数選択可）</div><div class="chip-row" id="ep-bi-allergy-chips"><div class="chip bio" onclick="togC(this,'ep-bi-allergy-types');togglePollenNote('ep-bi-pollen-note','ep-bi-allergy-chips')">花粉症</div><div class="chip bio" onclick="togC(this,'ep-bi-allergy-types')">金属アレルギー</div><div class="chip bio" onclick="togC(this,'ep-bi-allergy-types')">食物アレルギー</div><div class="chip bio" onclick="togC(this,'ep-bi-allergy-types')">ハウスダスト</div><div class="chip bio" onclick="togC(this,'ep-bi-allergy-types')">動物</div><div class="chip bio" onclick="togC(this,'ep-bi-allergy-types')">薬剤</div></div><input type="hidden" id="ep-bi-allergy-types"><div id="ep-bi-pollen-note" style="display:none;margin-top:8px"><input class="fi" id="ep-bi-pollen-detail" placeholder="花粉症の原因（例：スギ、ヒノキ、ブタクサなど）"></div><input class="fi" id="ep-bi-allergy-other" placeholder="その他（自由記入）" style="margin-top:8px"></div></div></div></div><div class="fc"><div class="fch bi">気になる症状・目標</div><div class="fr1"><div class="fg"><label class="fl">気になる症状（複数選択可）</label><div class="chip-row" id="ep-bi-sym-chips"><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">冷え</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">むくみ</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">疲れやすい</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">肩こり</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">腰痛</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">頭痛</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">眠れない・浅い</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">便秘</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">生理が不規則</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">生理痛・PMS</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">更年期の症状</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">体重が気になる</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">代謝が落ちた</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">風邪をひきやすい</div><div class="chip bio" onclick="togC(this,'ep-bi-symptoms')">気分が落ち込む</div></div><input type="hidden" id="ep-bi-symptoms"><input class="fi" id="ep-bi-sym-other" placeholder="その他" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">目標・きっかけ</label><textarea class="fta" id="ep-bi-goal"></textarea></div></div></div><div class="fc"><div class="fch bi">生活習慣</div><div class="fr1"><div class="fg"><label class="fl">食事</label><div class="chip-row" id="ep-bi-diet-chips"><div class="chip bio" onclick="selC('ep-bi-diet','三食規則正しく',this)">三食規則正しく</div><div class="chip bio" onclick="selC('ep-bi-diet','不規則なことが多い',this)">不規則なことが多い</div><div class="chip bio" onclick="selC('ep-bi-diet','外食が多い',this)">外食が多い</div><div class="chip bio" onclick="selC('ep-bi-diet','食事を抜くことがある',this)">食事を抜くことがある</div></div><input type="hidden" id="ep-bi-diet"></div></div><div class="fr1"><div class="fg"><label class="fl">睡眠（複数選択可）</label><div class="chip-row" id="ep-bi-sleep-chips"><div class="chip bio" onclick="togC(this,'ep-bi-sleep')">よく眠れている</div><div class="chip bio" onclick="togC(this,'ep-bi-sleep')">眠りが浅い</div><div class="chip bio" onclick="togC(this,'ep-bi-sleep')">寝つきが悪い</div><div class="chip bio" onclick="togC(this,'ep-bi-sleep')">睡眠時間が短い</div><div class="chip bio" onclick="togC(this,'ep-bi-sleep')">夜中に目が覚める</div></div><input type="hidden" id="ep-bi-sleep"></div></div><div class="fr1"><div class="fg"><label class="fl">運動</label><div class="chip-row" id="ep-bi-exercise-chips"><div class="chip bio" onclick="selC('ep-bi-exercise','週3回以上',this)">週3回以上</div><div class="chip bio" onclick="selC('ep-bi-exercise','週1〜2回程度',this)">週1〜2回程度</div><div class="chip bio" onclick="selC('ep-bi-exercise','ほとんどしない',this)">ほとんどしない</div></div><input type="hidden" id="ep-bi-exercise"></div></div><div class="fr1"><div class="fg"><label class="fl">ストレス</label><div class="chip-row" id="ep-bi-stress-chips"><div class="chip bio" onclick="selC('ep-bi-stress','あまりない',this)">あまりない</div><div class="chip bio" onclick="selC('ep-bi-stress','ふつう',this)">ふつう</div><div class="chip bio" onclick="selC('ep-bi-stress','多め',this)">多め</div><div class="chip bio" onclick="selC('ep-bi-stress','かなり多い',this)">かなり多い</div></div><input type="hidden" id="ep-bi-stress"></div></div><div class="fr2"><div class="fg"><label class="fl">お酒</label><div class="chip-row" id="ep-bi-alcohol-chips"><div class="chip bio" onclick="selC('ep-bi-alcohol','飲まない',this)">飲まない</div><div class="chip bio" onclick="selC('ep-bi-alcohol','たまに',this)">たまに</div><div class="chip bio" onclick="selC('ep-bi-alcohol','ほぼ毎日',this)">ほぼ毎日</div></div><input type="hidden" id="ep-bi-alcohol"></div><div class="fg"><label class="fl">タバコ</label><div class="chip-row" id="ep-bi-smoke-chips"><div class="chip bio" onclick="selC('ep-bi-smoke','吸わない',this)">吸わない</div><div class="chip bio" onclick="selC('ep-bi-smoke','以前吸っていた',this)">以前吸っていた</div><div class="chip bio" onclick="selC('ep-bi-smoke','吸う',this)">吸う</div></div><input type="hidden" id="ep-bi-smoke"></div></div></div><div class="fc"><div class="fch bi">生理・ホルモン</div><div class="fr1"><div class="fg"><label class="fl">生理の状態</label><div class="chip-row" id="ep-bi-period-chips"><div class="chip bio" onclick="selC('ep-bi-period','規則的',this)">規則的</div><div class="chip bio" onclick="selC('ep-bi-period','不規則',this)">不規則</div><div class="chip bio" onclick="selC('ep-bi-period','閉経した',this)">閉経した</div><div class="chip bio" onclick="selC('ep-bi-period','答えたくない',this)">答えたくない</div></div><input type="hidden" id="ep-bi-period"></div></div><div class="fr1"><div class="fg"><label class="fl">更年期症状</label><div class="chip-row" id="ep-bi-meno-chips"><div class="chip bio" onclick="selC('ep-bi-meno','あり',this)">あり</div><div class="chip bio" onclick="selC('ep-bi-meno','なし',this)">なし</div></div><input type="hidden" id="ep-bi-meno"></div></div><div class="fr1"><div class="fg"><label class="fl">ホルモン療法・ピル</label><div class="chip-row" id="ep-bi-hormone-chips"><div class="chip bio" onclick="selC('ep-bi-hormone','使っている',this)">使っている</div><div class="chip bio" onclick="selC('ep-bi-hormone','以前使っていた',this)">以前使っていた</div><div class="chip bio" onclick="selC('ep-bi-hormone','使っていない',this)">使っていない</div></div><input type="hidden" id="ep-bi-hormone"></div></div></div><div class="fc"><div class="fch staff">スタッフ情報</div><div class="fr1"><div class="fg"><label class="fl">スタッフが気になる症状（複数選択可）</label><div class="chip-row" id="ep-bi-staff-sym-chips"><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">冷え</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">むくみ</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">肩こり</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">腰痛</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">頭痛</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">生理関連</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">更年期症状</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">排便状況</div><div class="chip bio" onclick="togC(this,'ep-bi-staff-symptoms')">自律神経の乱れ</div></div><input type="hidden" id="ep-bi-staff-symptoms"></div></div><div class="fr1"><div class="fg"><label class="fl">仕事内容</label><div class="chip-row" id="ep-bi-job-chips"><div class="chip bio" onclick="selC('ep-bi-job','立ち仕事',this)">立ち仕事</div><div class="chip bio" onclick="selC('ep-bi-job','デスクワーク',this)">デスクワーク</div></div><input type="hidden" id="ep-bi-job"><input class="fi" id="ep-bi-job-detail" placeholder="自由記載" style="margin-top:8px"></div></div><div class="fr1"><div class="fg"><label class="fl">スタッフメモ（内部用）</label><textarea class="fta" id="ep-bi-staff-note"></textarea></div></div><div class="fr1"><div class="fg"><label class="fl">お客様メモ</label><textarea class="fta" id="ep-bi-notes"></textarea></div></div></div><div class="brow" style="margin-top:8px"><button class="btn-s" onclick="openPt(curId)">キャンセル</button><button class="btn-p bi" onclick="saveEditPt('bi')">✅ 保存する</button></div></div></div>
+<div class="lbox" id="lbox-el" onclick="lboxClose()"><button class="lbox-x" onclick="lboxClose(event)">✕</button><img id="lbox-img" src="" alt=""><div class="lbox-cap" id="lbox-cap"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+
+// ════════════════════════ DATA ════════════════════════
+var DB = {
+  load: function() {
+    // embedded-dataにデータがあれば必ずそちらを優先（iPadから送ったファイルの場合）
+    try {
+      var el = document.getElementById('embedded-data');
+      if (el && el.textContent.trim() && el.textContent.trim() !== '[]') {
+        var data = JSON.parse(el.textContent);
+        if (data && data.length > 0) {
+          // localStorageも上書きして同期
+          try { localStorage.setItem('sk5_pts', JSON.stringify(data)); } catch(e) {}
+          // embedded-dataを空にして次回からlocalStorageを使う
+          el.textContent = '[]';
+          return data;
+        }
+      }
+    } catch(e) {}
+    // localStorageから読む
+    try {
+      var d = localStorage.getItem('sk5_pts');
+      if (d) return JSON.parse(d);
+    } catch(e) {}
+    return [];
+  },
+  save: function(pts) {
+    try { localStorage.setItem('sk5_pts', JSON.stringify(pts)); } catch(e) {}
+  }
+};
+var patients = DB.load();
+var curId = null;
+var sigState = {}; // { pfx: { ctx, has, drawing } }
+var lyPhotos = [];
+window._vB = null;
+window._vA = null;
+
+// ════════════════════════ NAV ════════════════════════
+function go(sc) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  var el = document.getElementById('sc-' + sc);
+  if (el) el.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goNewCourse() { go('course'); }
+function startReg(course) {
+  if (course === 'ly') {
+    resetLy();
+    go('reg-ly');
+    buildProg('ly', 1, 4);
+  } else {
+    resetBi();
+    go('reg-bi');
+    buildProg('bi', 1, 6);
+  }
+}
+
+// ════════════════════════ FILTER / LIST ════════════════════════
+var curF = 'all';
+function setF(f, el) {
+  curF = f;
+  document.querySelectorAll('.ft').forEach(function(t) { t.classList.remove('on'); });
+  el.classList.add('on');
+  renderList();
+}
+function renderList() {
+  var q = (document.getElementById('q').value || '').trim().toLowerCase();
+  var list = patients.filter(function(p) {
+    return p.name.toLowerCase().includes(q) || (p.kana || '').toLowerCase().includes(q);
+  });
+  if (curF === 'ly') list = list.filter(function(p) { return p.course === 'ly'; });
+  if (curF === 'bi') list = list.filter(function(p) { return p.course === 'bi'; });
+  document.getElementById('pt-count').textContent = list.length + '名';
+  var el = document.getElementById('pt-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">🌿</div><p>登録されていません</p></div>';
+    return;
+  }
+  el.innerHTML = list.map(function(p) {
+    var age = p.birth ? calcAge(p.birth) + '歳' : '';
+    var last = p.visits && p.visits.length ? p.visits[p.visits.length - 1].date : '未来店';
+    var visits = p.visits ? p.visits.length : 0;
+    var badge = p.course === 'ly'
+      ? '<span class="badge ly">🌿 リンパ浮腫ケア</span>'
+      : '<span class="badge bi">🌱 巡温バイオケア</span>';
+    return '<div class="ptcard" onclick="openPt(\'' + p.id + '\')">'
+      + '<div><div class="ptname">' + p.name
+      + (p.kana ? ' <span style="font-size:11px;color:var(--wg)">' + p.kana + '</span>' : '')
+      + '</div><div class="ptmeta">' + (age ? age + ' / ' : '') + '最終来店: ' + last + ' / ' + visits + '回</div></div>'
+      + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' + badge + '<span style="font-size:17px;color:var(--border)">›</span></div>'
+      + '</div>';
+  }).join('');
+}
+function calcAge(b) {
+  var d = new Date(b), n = new Date();
+  var a = n.getFullYear() - d.getFullYear();
+  if (n.getMonth() < d.getMonth() || (n.getMonth() === d.getMonth() && n.getDate() < d.getDate())) a--;
+  return a;
+}
+
+// ════════════════════════ CHIP HELPERS ════════════════════════
+function selC(hid, val, el) {
+  document.getElementById(hid).value = val;
+  var grp = el.closest('.chips') || el.closest('.chip-row');
+  if (grp) grp.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('on', 'ex'); });
+  el.classList.add('ex');
+}
+function togC(el, hid) {
+  el.classList.toggle('on');
+  var grp = el.closest('.chips') || el.closest('.chip-row');
+  var sel = Array.from(grp.querySelectorAll('.chip.on')).map(function(c) { return c.textContent; });
+  document.getElementById(hid).value = sel.join('、');
+}
+function gv(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+// ════════════════════════ PROGRESS ════════════════════════
+function buildProg(pfx, cur, total) {
+  var labels = pfx === 'ly'
+    ? ['基本情報', 'お身体', 'ご同意', '登録']
+    : ['基本情報', '健康', 'お悩み', '生活習慣', 'ご同意', '登録'];
+  var isBio = pfx === 'bi';
+  var html = labels.map(function(l, i) {
+    var n = i + 1;
+    var cls = n < cur ? 'ps done' + (isBio ? ' bi' : '') : n === cur ? 'ps active' + (isBio ? ' bi' : '') : 'ps';
+    var dot = n < cur ? '✓' : n;
+    return '<div class="' + cls + '"><div class="ps-dot">' + dot + '</div><div class="ps-lbl">' + l + '</div></div>';
+  }).join('');
+  document.getElementById(pfx + '-steps').innerHTML = html;
+}
+
+// ════════════════════════ SIGNATURE ════════════════════════
+function initSig(pfx) {
+  var wrap = document.getElementById(pfx + '-sig-wrap');
+  var oldCv = document.getElementById(pfx + '-sig-cv');
+  if (!wrap || !oldCv) return;
+
+  var w = wrap.getBoundingClientRect().width;
+  if (!w || w < 10) { setTimeout(function() { initSig(pfx); }, 100); return; }
+
+  // Replace canvas to clear all old listeners
+  var cv = document.createElement('canvas');
+  cv.id = pfx + '-sig-cv';
+  cv.width = Math.floor(w);
+  cv.height = 130;
+  oldCv.parentNode.replaceChild(cv, oldCv);
+
+  var ctx = cv.getContext('2d');
+  ctx.strokeStyle = '#2c2a28';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  sigState[pfx] = { ctx: ctx, has: false, drawing: false };
+
+  function getXY(e) {
+    var r = cv.getBoundingClientRect();
+    var src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - r.left, y: src.clientY - r.top };
+  }
+  function onDown(e) {
+    e.preventDefault();
+    sigState[pfx].drawing = true;
+    var p = getXY(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+  function onMove(e) {
+    e.preventDefault();
+    if (!sigState[pfx].drawing) return;
+    var p = getXY(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    if (!sigState[pfx].has) {
+      sigState[pfx].has = true;
+      var ph = document.getElementById(pfx + '-sig-ph');
+      if (ph) ph.style.opacity = '0';
+    }
+    if (pfx === 'ly') lyChkConsent();
+    else biChkConsent();
+  }
+  function onUp(e) {
+    e.preventDefault();
+    sigState[pfx].drawing = false;
+  }
+  cv.addEventListener('mousedown', onDown);
+  cv.addEventListener('mousemove', onMove);
+  cv.addEventListener('mouseup', onUp);
+  cv.addEventListener('mouseleave', onUp);
+  cv.addEventListener('touchstart', onDown, { passive: false });
+  cv.addEventListener('touchmove', onMove, { passive: false });
+  cv.addEventListener('touchend', onUp, { passive: false });
+  cv.addEventListener('touchcancel', onUp, { passive: false });
+}
+
+function clrSig(pfx) {
+  var state = sigState[pfx];
+  var cv = document.getElementById(pfx + '-sig-cv');
+  if (!state || !cv) return;
+  state.ctx.clearRect(0, 0, cv.width, cv.height);
+  state.has = false;
+  var ph = document.getElementById(pfx + '-sig-ph');
+  if (ph) ph.style.opacity = '1';
+  if (pfx === 'ly') lyChkConsent();
+  else biChkConsent();
+}
+
+function getSig(pfx) {
+  var state = sigState[pfx];
+  if (!state || !state.has) return null;
+  var cv = document.getElementById(pfx + '-sig-cv');
+  return cv ? cv.toDataURL() : null;
+}
+
+// ════════════════════════ LYMPH REG ════════════════════════
+function lyNext(n) {
+  if (n === 2) {
+    if (!gv('ly-name')) { show('ly-name-err'); document.getElementById('ly-name').focus(); return; } hide('ly-name-err');
+    if (!gv('ly-birth')) { show('ly-birth-err'); return; } hide('ly-birth-err');
+  }
+  if (n === 3) {
+    hide('ly-limb-err');
+    buildLyConfirm();
+  }
+  // Show page
+  document.querySelectorAll('#sc-reg-ly .pg').forEach(function(p) { p.classList.remove('active'); });
+  var pg = document.getElementById('ly-p' + n);
+  if (pg) pg.classList.add('active');
+  buildProg('ly', n, 4);
+  window.scrollTo(0, 0);
+  if (n === 3) {
+    // Init sig after layout
+    requestAnimationFrame(function() { setTimeout(function() { initSig('ly'); }, 60); });
+  }
+}
+
+function buildLyConfirm() {
+  var items = [
+    ['お名前', gv('ly-name') || '—'],
+    ['フリガナ', gv('ly-kana') || '—'],
+    ['生年月日', gv('ly-birth') || '—'],
+    ['性別', gv('ly-gender') || '—'],
+    ['電話番号', gv('ly-phone') || '—'],
+    ['体重/身長', [(gv('ly-weight') ? gv('ly-weight')+'kg' : ''), (gv('ly-height') ? gv('ly-height')+'cm' : '')].filter(Boolean).join(' / ') || '—'],
+    ['水分摂取量', gv('ly-water') ? gv('ly-water')+'ml' : '—'],
+    ['既往歴', gv('ly-history') || '—'],
+    ['服用薬', gv('ly-meds') || '—'],
+    ['むくみの部位', gv('ly-limb') || '—'],
+    ['発症時期', gv('ly-onset') || '—'],
+    ['原因', gv('ly-cause') || '—'],
+    ['担当医', gv('ly-doctor') || '—'],
+    ['病院名', gv('ly-hospital') || '—'],
+  ];
+  document.getElementById('ly-confirm').innerHTML = items.map(function(a) {
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:4px">'
+      + '<span style="color:var(--wg);font-size:11px;min-width:90px">' + a[0] + '</span>'
+      + '<span style="font-weight:500;text-align:right;flex:1">' + a[1] + '</span></div>';
+  }).join('');
+}
+
+function lyChkConsent() {
+  var ok = document.getElementById('ly-consent').checked && sigState['ly'] && sigState['ly'].has;
+  document.getElementById('ly-submit').disabled = !ok;
+}
+
+function lySubmit() {
+  if (!document.getElementById('ly-consent').checked || !(sigState['ly'] && sigState['ly'].has)) {
+    show('ly-consent-err'); return;
+  }
+  hide('ly-consent-err');
+  // Go to staff page
+  document.querySelectorAll('#sc-reg-ly .pg').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('ly-p4').classList.add('active');
+  buildProg('ly', 4, 4);
+  window.scrollTo(0, 0);
+}
+
+function lyRegister() {
+  var id = Date.now().toString();
+  var pt = {
+    id: id, course: 'ly',
+    name: gv('ly-name'), kana: gv('ly-kana'), birth: gv('ly-birth'),
+    gender: gv('ly-gender'), phone: gv('ly-phone'),
+    weight: gv('ly-weight'), height: gv('ly-height'), water: gv('ly-water'),
+    history: gv('ly-history'), meds: gv('ly-meds'),
+    conditions: gv('ly-conditions'), conditionsOther: gv('ly-conditions-other'),
+    clinic: gv('ly-clinic'),
+    cancelType: gv('ly-cancer-type'), cancerOther: gv('ly-cancer-other'),
+    treatmentType: gv('ly-treatment-type'), cancerWhen: gv('ly-cancer-when'),
+    cancerStatus: gv('ly-cancer-status'),
+    dissection: gv('ly-dissection'), dissectionSite: gv('ly-dissection-site'),
+    dissectionDetail: gv('ly-dissection-detail'), doctorNotes: gv('ly-doctor-notes'),
+    allergyYn: gv('ly-allergy-yn'), allergy: gv('ly-allergy'),
+    onset: gv('ly-onset'), limb: gv('ly-limb'), cause: gv('ly-cause'),
+    doctor: gv('ly-doctor'), hospital: gv('ly-hospital'),
+    notes: gv('ly-notes'),
+    // Staff fields
+    limbS: gv('ly-limb-s'), stage: gv('ly-stage'),
+    job: gv('ly-job'), jobDetail: gv('ly-job-detail'),
+    cellulitis: gv('ly-cellulitis'), cellulitisDetail: gv('ly-cellulitis-detail'),
+    staffNote: gv('ly-staff-note'),
+    photos: lyPhotos.slice(),
+    signature: getSig('ly'),
+    createdAt: new Date().toISOString(), visits: []
+  };
+  patients.unshift(pt);
+  DB.save(patients);
+  toast('✅ 登録しました！');
+  renderList();
+  go('list');
+}
+
+function resetLy() {
+  ['ly-name','ly-kana','ly-birth','ly-phone','ly-weight','ly-height',
+   'ly-history','ly-meds','ly-allergy','ly-onset','ly-doctor','ly-hospital','ly-notes',
+   'ly-limb-s','ly-cellulitis-detail','ly-staff-note'].forEach(function(id) {
+    var e = document.getElementById(id); if (e) e.value = '';
+  });
+  ['ly-gender','ly-limb','ly-cause','ly-allergy-yn','ly-cellulitis'].forEach(function(id) {
+    var e = document.getElementById(id); if (e) e.value = '';
+  });
+  var aw = document.getElementById('ly-allergy-wrap'); if (aw) aw.style.display = 'none';
+  var cw = document.getElementById('ly-cellulitis-wrap'); if (cw) cw.style.display = 'none';
+  document.querySelectorAll('#sc-reg-ly .chip.on, #sc-reg-ly .chip.ex').forEach(function(c) { c.classList.remove('on','ex'); });
+  var st = document.getElementById('ly-stage'); if (st) st.value = '';
+  var cb = document.getElementById('ly-consent'); if (cb) cb.checked = false;
+  var sb = document.getElementById('ly-submit'); if (sb) sb.disabled = true;
+  lyPhotos = [];
+  renderLyPhotoGrid();
+  sigState['ly'] = null;
+  var ph = document.getElementById('ly-sig-ph'); if (ph) ph.style.opacity = '1';
+  document.querySelectorAll('#sc-reg-ly .pg').forEach(function(p) { p.classList.remove('active'); });
+  var p1 = document.getElementById('ly-p1'); if (p1) p1.classList.add('active');
+}
+
+// ════════════════════════ BIO REG ════════════════════════
+function biNext(n) {
+  if (n === 2) {
+    if (!gv('bi-name')) { show('bi-name-err'); document.getElementById('bi-name').focus(); return; } hide('bi-name-err');
+    if (!gv('bi-birth')) { show('bi-birth-err'); return; } hide('bi-birth-err');
+  }
+  if (n === 5) buildBiConfirm();
+  document.querySelectorAll('#sc-reg-bi .pg').forEach(function(p) { p.classList.remove('active'); });
+  var pg = document.getElementById('bi-p' + n);
+  if (pg) pg.classList.add('active');
+  buildProg('bi', n, 5);
+  window.scrollTo(0, 0);
+  if (n === 5) {
+    requestAnimationFrame(function() { setTimeout(function() { initSig('bi'); }, 60); });
+  }
+}
+
+function buildBiConfirm() {
+  var items = [
+    ['お名前', gv('bi-name')],
+    ['フリガナ', gv('bi-kana') || '—'],
+    ['生年月日', gv('bi-birth') || '—'],
+    ['性別', gv('bi-gender') || '—'],
+    ['電話番号', gv('bi-phone') || '—'],
+    ['体重/身長', [(gv('bi-weight') ? gv('bi-weight') + 'kg' : ''), (gv('bi-height') ? gv('bi-height') + 'cm' : '')].filter(Boolean).join(' / ') || '—'],
+    ['気になる症状', gv('bi-symptoms') || '—'],
+    ['目標', gv('bi-goal') || '—'],
+    ['食事', gv('bi-diet') || '—'],
+    ['睡眠', gv('bi-sleep') || '—'],
+    ['運動', gv('bi-exercise') || '—'],
+  ];
+  document.getElementById('bi-confirm').innerHTML = items.map(function(a) {
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:4px">'
+      + '<span style="color:var(--wg);font-size:11px;min-width:90px">' + a[0] + '</span>'
+      + '<span style="font-weight:500;text-align:right;flex:1">' + a[1] + '</span></div>';
+  }).join('');
+}
+
+function biChkConsent() {
+  var ok = document.getElementById('bi-consent').checked && sigState['bi'] && sigState['bi'].has;
+  document.getElementById('bi-submit').disabled = !ok;
+}
+
+function biSubmit() {
+  if (!document.getElementById('bi-consent').checked || !(sigState['bi'] && sigState['bi'].has)) {
+    show('bi-consent-err'); return;
+  }
+  hide('bi-consent-err');
+  document.querySelectorAll('#sc-reg-bi .pg').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('bi-p6').classList.add('active');
+  buildProg('bi', 6, 6);
+  window.scrollTo(0, 0);
+}
+
+function biRegister() {
+  var id = Date.now().toString();
+  var pt = {
+    id: id, course: 'bi',
+    name: gv('bi-name'), kana: gv('bi-kana'), birth: gv('bi-birth'),
+    gender: gv('bi-gender'), phone: gv('bi-phone'),
+    weight: gv('bi-weight'), height: gv('bi-height'), water: gv('bi-water'),
+    history: gv('bi-history'), meds: gv('bi-meds'),
+    conditions: gv('bi-conditions'), conditionsOther: gv('bi-conditions-other'),
+    surgery: gv('bi-surgery'), surgeryDetail: gv('bi-surgery-detail'),
+    metal: gv('bi-metal'), metalType: gv('bi-metal-type'), metalDetail: gv('bi-metal-detail'),
+    pregnancy: gv('bi-pregnancy'),
+    allergyYn: gv('bi-allergy-yn'), allergyTypes: gv('bi-allergy-types'), allergyOther: gv('bi-allergy-other'),
+    symptoms: gv('bi-symptoms'), symOther: gv('bi-sym-other'),
+    goal: gv('bi-goal'), diet: gv('bi-diet'), sleep: gv('bi-sleep'),
+    exercise: gv('bi-exercise'), stress: gv('bi-stress'),
+    alcohol: gv('bi-alcohol'), smoke: gv('bi-smoke'),
+    period: gv('bi-period'), meno: gv('bi-meno'), hormone: gv('bi-hormone'),
+    notes: gv('bi-notes'),
+    staffNote: gv('bi-staff-note'),
+    staffSymptoms: gv('bi-staff-symptoms'),
+    pollenDetail: gv('bi-pollen-detail'),
+    job: gv('bi-job'), jobDetail: gv('bi-job-detail'),
+    signature: getSig('bi'),
+    createdAt: new Date().toISOString(), visits: []
+  };
+  patients.unshift(pt);
+  DB.save(patients);
+  toast('✅ 登録しました！');
+  renderList();
+  go('list');
+}
+
+function resetBi() {
+  ['bi-name','bi-kana','bi-birth','bi-phone','bi-weight','bi-height',
+   'bi-history','bi-meds','bi-sym-other','bi-goal','bi-notes','bi-staff-note'].forEach(function(id) {
+    var e = document.getElementById(id); if (e) e.value = '';
+  });
+  ['bi-gender','bi-symptoms','bi-diet','bi-sleep','bi-exercise','bi-stress',
+   'bi-alcohol','bi-smoke','bi-period','bi-meno','bi-hormone',
+   'bi-allergy-yn','bi-allergy-types'].forEach(function(id) {
+    var e = document.getElementById(id); if (e) e.value = '';
+  });
+  var baw = document.getElementById('bi-allergy-wrap'); if (baw) baw.style.display = 'none';
+  document.querySelectorAll('#sc-reg-bi .chip.on, #sc-reg-bi .chip.ex').forEach(function(c) { c.classList.remove('on','ex'); });
+  var cb = document.getElementById('bi-consent'); if (cb) cb.checked = false;
+  var sb = document.getElementById('bi-submit'); if (sb) sb.disabled = true;
+  sigState['bi'] = null;
+  var ph = document.getElementById('bi-sig-ph'); if (ph) ph.style.opacity = '1';
+  document.querySelectorAll('#sc-reg-bi .pg').forEach(function(p) { p.classList.remove('active'); });
+  var p1 = document.getElementById('bi-p1'); if (p1) p1.classList.add('active');
+  // reset bi-p6 fields
+  ['bi-staff-symptoms','bi-job','bi-staff-note','bi-job-detail'].forEach(function(id){
+    var e=document.getElementById(id); if(e) e.value='';
+  });
+  document.querySelectorAll('#sc-reg-bi .chip.on, #sc-reg-bi .chip.ex').forEach(function(el){el.classList.remove('on','ex');});
+}
+
+// ════════════════════════ PHOTOS ════════════════════════
+function readFile(f) {
+  return new Promise(function(resolve) {
+    var r = new FileReader();
+    r.onload = function(e) { resolve(e.target.result); };
+    r.readAsDataURL(f);
+  });
+}
+async function addPhotos(input, pfx) {
+  var files = Array.from(input.files);
+  for (var i = 0; i < files.length; i++) {
+    if (lyPhotos.length >= 6) { toast('写真は最大6枚です'); break; }
+    var d = await readFile(files[i]);
+    lyPhotos.push(d);
+  }
+  renderLyPhotoGrid();
+  input.value = '';
+}
+function renderLyPhotoGrid() {
+  var g = document.getElementById('ly-photo-grid');
+  if (!g) return;
+  g.innerHTML = lyPhotos.map(function(src, i) {
+    return '<div class="pt-wrap"><img src="' + src + '" alt="" onclick="lbox(\'' + src + '\',\'写真' + (i+1) + '\')">'
+      + '<div class="pt-lbl">写真' + (i+1) + '</div>'
+      + '<button class="pt-del" onclick="delLyPhoto(' + i + ',event)">✕</button></div>';
+  }).join('');
+}
+function delLyPhoto(i, e) { e.stopPropagation(); lyPhotos.splice(i, 1); renderLyPhotoGrid(); }
+
+async function setVPhoto(input, type) {
+  var f = input.files[0]; if (!f) return;
+  var d = await readFile(f);
+  if (type === 'before') {
+    window._vB = d;
+    document.getElementById('v-before-img').src = d;
+    document.getElementById('v-before-prev').style.display = 'block';
+    document.getElementById('v-before-area').style.display = 'none';
+  } else {
+    window._vA = d;
+    document.getElementById('v-after-img').src = d;
+    document.getElementById('v-after-prev').style.display = 'block';
+    document.getElementById('v-after-area').style.display = 'none';
+  }
+  input.value = '';
+}
+function delVP(type, e) {
+  e.stopPropagation();
+  if (type === 'before') {
+    window._vB = null;
+    document.getElementById('v-before-prev').style.display = 'none';
+    document.getElementById('v-before-area').style.display = 'block';
+  } else {
+    window._vA = null;
+    document.getElementById('v-after-prev').style.display = 'none';
+    document.getElementById('v-after-area').style.display = 'block';
+  }
+}
+
+// ════════════════════════ LIGHTBOX ════════════════════════
+function lbox(src, cap) {
+  if (!src) return;
+  document.getElementById('lbox-img').src = src;
+  document.getElementById('lbox-cap').textContent = cap || '';
+  document.getElementById('lbox-el').classList.add('open');
+}
+function lboxClose(e) { if (e) e.stopPropagation(); document.getElementById('lbox-el').classList.remove('open'); }
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') lboxClose(); });
+
+// ════════════════════════ DETAIL ════════════════════════
+function openPt(id) {
+  curId = id;
+  var p = patients.find(function(x) { return x.id === id; });
+  var isLy = p.course === 'ly';
+  document.getElementById('d-name').textContent = p.name;
+  document.getElementById('d-badge').innerHTML = isLy
+    ? '<span class="badge ly">🌿 リンパ浮腫ケア</span>'
+    : '<span class="badge bi">🌱 巡温バイオケア</span>';
+  var age = p.birth ? calcAge(p.birth) + '歳' : '';
+  document.getElementById('d-meta').textContent = [age, p.gender, p.phone].filter(Boolean).join(' / ');
+  document.getElementById('d-info-t').className = 'fch' + (isLy ? '' : ' bi');
+
+  var items = [
+    ['生年月日', p.birth || '—'],
+    ['体重/身長', [(p.weight ? p.weight+'kg' : ''), (p.height ? p.height+'cm' : '')].filter(Boolean).join('/') || '—'],
+    ['1日の水分摂取量', p.water ? p.water + 'ml' : '—']
+  ];
+  if (isLy) {
+    var allergyStr = p.allergyYn === 'あり' ? 'あり' + (p.allergy ? '（' + p.allergy + '）' : '') : (p.allergyYn || p.allergy || '—');
+    var cellulitisStr = p.cellulitis === 'あり' ? 'あり' + (p.cellulitisDetail ? '（' + p.cellulitisDetail + '）' : '') : (p.cellulitis || '—');
+    var doctorStr = [p.doctor, p.hospital].filter(Boolean).join(' / ') || '—';
+    items.push(
+      ['既往歴', p.history || '—'],
+      ['服用薬', p.meds || '—'],
+      ['高血圧・心疾患・糖尿病等', [p.conditions, p.conditionsOther].filter(Boolean).join('、') || '—'],
+      ['通院状況', p.clinic || '—'],
+      ['アレルギー', allergyStr],
+      ['蜂窩織炎の既往', cellulitisStr],
+      ['がんの種類', [p.cancelType, p.cancerOther].filter(Boolean).join('、') || '—'],
+      ['治療内容', p.treatmentType || '—'],
+      ['治療時期・状況', [p.cancerWhen, p.cancerStatus].filter(Boolean).join('　') || '—'],
+      ['リンパ節郭清', p.dissection ? p.dissection + (p.dissectionSite ? '（' + p.dissectionSite + (p.dissectionDetail ? '・' + p.dissectionDetail : '') + '）' : '') : '—'],
+      ['主治医からの注意事項', p.doctorNotes || '—'],
+      ['患肢', (p.limbS || p.limb) || '—'],
+      ['ステージ', p.stage || '—'],
+      ['発症時期', p.onset || '—'],
+      ['原因', p.cause || '—'],
+      ['担当医/病院', doctorStr],
+      ['お客様メモ', p.notes || '—']
+    );
+  } else {
+    var biAllergyStr = p.allergyYn === 'あり'
+      ? 'あり' + ([p.allergyTypes, p.allergyOther].filter(Boolean).join('、') ? '（' + [p.allergyTypes, p.allergyOther].filter(Boolean).join('、') + '）' : '')
+      : (p.allergyYn || '—');
+    var condStr = [p.conditions, p.conditionsOther].filter(Boolean).join('、') || '—';
+    var surgeryStr = p.surgery === 'あり' ? 'あり' + (p.surgeryDetail ? '（' + p.surgeryDetail + '）' : '') : (p.surgery || '—');
+    var metalStr = p.metal === 'あり' ? 'あり' + ([p.metalType, p.metalDetail].filter(Boolean).join('　') ? '（' + [p.metalType, p.metalDetail].filter(Boolean).join('　') + '）' : '') : (p.metal || '—');
+    items.push(
+      ['持病・既往歴', p.history || '—'],
+      ['高血圧・心疾患・糖尿病等', condStr],
+      ['常用薬', p.meds || '—'],
+      ['アレルギー', biAllergyStr],
+      ['手術歴', surgeryStr],
+      ['体内金属', metalStr],
+      ['妊娠', p.pregnancy || '—'],
+      ['気になる症状', [p.symptoms, p.symOther].filter(Boolean).join('、') || '—'],
+      ['目標・きっかけ', p.goal || '—'],
+      ['食事', p.diet || '—'],
+      ['睡眠', p.sleep || '—'],
+      ['運動', p.exercise || '—'],
+      ['ストレス', p.stress || '—'],
+      ['飲酒', p.alcohol || '—'],
+      ['喫煙', p.smoke || '—'],
+      ['生理の状態', p.period || '—'],
+      ['更年期症状', p.meno || '—'],
+      ['ホルモン療法', p.hormone || '—'],
+      ['お客様メモ', p.notes || '—']
+    );
+  }
+  if (p.staffNote) items.push(['スタッフメモ', p.staffNote]);
+  if (p.job || p.jobDetail) items.push(['仕事内容', [p.job, p.jobDetail].filter(Boolean).join('・')]);
+  if (!isLy && p.staffSymptoms) items.push(['スタッフ所見', p.staffSymptoms]);
+  if (!isLy && p.pollenDetail) items.push(['花粉症の原因', p.pollenDetail]);
+
+  document.getElementById('d-ig').innerHTML = items.map(function(a) {
+    return '<div class="ii"><div class="lb">' + a[0] + '</div><div class="vl">' + a[1] + '</div></div>';
+  }).join('');
+
+  var pfc = document.getElementById('d-photos-fc');
+  var pgr = document.getElementById('d-photos-grid');
+  if (isLy && p.photos && p.photos.length) {
+    pfc.style.display = 'block';
+    pgr.innerHTML = p.photos.map(function(src, i) {
+      return '<div class="pt-wrap"><img src="' + src + '" alt="" onclick="lbox(\'' + src + '\',\'初回写真' + (i+1) + '\')">'
+        + '<div class="pt-lbl">初回写真' + (i+1) + '</div></div>';
+    }).join('');
+  } else { pfc.style.display = 'none'; }
+
+  // サイン画像をセット
+  var sigImg = document.getElementById('d-sig-img');
+  var sigNone = document.getElementById('d-sig-none');
+  var sigWrap = document.getElementById('d-sig-wrap');
+  sigWrap.style.display = 'none'; // 閉じた状態に戻す
+  if (p.signature) {
+    sigImg.src = p.signature;
+    sigImg.style.display = 'block';
+    sigNone.style.display = 'none';
+  } else {
+    sigImg.src = '';
+    sigImg.style.display = 'none';
+    sigNone.style.display = 'block';
+  }
+
+  document.getElementById('d-add-btn').className = 'tbtn' + (isLy ? '' : '');
+  renderVisits(p);
+  renderCharts(p);
+  go('detail');
+}
+
+function renderVisits(p) {
+  var isLy = p.course === 'ly';
+  var el = document.getElementById('visit-list');
+  if (!p.visits || !p.visits.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">📋</div><p>来店記録がありません</p></div>';
+    return;
+  }
+  var sorted = p.visits.slice().reverse();
+  el.innerHTML = sorted.map(function(v, vi) {
+    var hi = parseFloat(v.temp) >= 37.5;
+    var chips = v.cond ? v.cond.split('、').map(function(c) {
+      return '<span class="chip on' + (isLy ? '' : ' bio') + '" style="pointer-events:none;font-size:11px;padding:4px 9px">' + c + '</span>';
+    }).join('') : '';
+    var circ = '';
+    if (v.circ && Object.keys(v.circ).length) {
+      circ = '<div style="margin-top:6px;font-size:11px;padding:6px 9px;background:var(--acc-l);border-radius:7px;color:var(--acc)">'
+        + Object.entries(v.circ).map(function(e) { return e[0] + ': ' + e[1] + 'cm'; }).join('　')
+        + '</div>';
+    }
+    var bioStats = '';
+    if (!isLy && (v.fat || v.muscle || v.bmr)) {
+      bioStats = '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px">'
+        + (v.fat ? '<div class="vstat"><div class="lb">体脂肪率</div><div>' + v.fat + '%</div></div>' : '')
+        + (v.muscle ? '<div class="vstat"><div class="lb">筋肉量</div><div>' + v.muscle + 'kg</div></div>' : '')
+        + (v.bmr ? '<div class="vstat"><div class="lb">基礎代謝</div><div>' + v.bmr + 'kcal</div></div>' : '')
+        + '</div>';
+    }
+    var photos = '';
+    if (!isLy && (v.photoBefore || v.photoAfter)) {
+      photos = '<div class="photo-compare">'
+        + (v.photoBefore ? '<div class="pc-item"><div class="pc-lbl bio">Before</div><img src="' + v.photoBefore + '" onclick="lbox(\'' + v.photoBefore + '\',\'施術前 ' + v.date + '\')" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;cursor:pointer"></div>' : '')
+        + (v.photoAfter  ? '<div class="pc-item"><div class="pc-lbl bio">After</div><img src="' + v.photoAfter + '" onclick="lbox(\'' + v.photoAfter + '\',\'施術後 ' + v.date + '\')" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;cursor:pointer"></div>' : '')
+        + '</div>';
+    }
+    var nc = isLy ? 'var(--acc)' : 'var(--bio)';
+    return '<div class="vi' + (isLy ? '' : ' bi') + '">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      + '<div class="vdate' + (isLy ? '' : ' bi') + '" style="margin-bottom:0">📅 ' + v.date + '</div>'
+      + '<div style="display:flex;gap:6px">'
+      + '<button onclick="openEditVisit(' + (p.visits.length - 1 - vi) + ',event)" style="background:none;border:none;color:var(--wg);font-size:13px;cursor:pointer;padding:2px 4px" title="編集">✏️</button>'
+      + '<button onclick="deleteVisit(' + (p.visits.length - 1 - vi) + ',event)" style="background:none;border:none;color:var(--border);font-size:14px;cursor:pointer;padding:2px 4px" title="削除">🗑</button>'
+      + '</div>'
+      + '</div>'
+      + '<div class="vstats">'
+      + '<div class="vstat"><div class="lb">体温</div><span class="tbadge' + (hi ? '' : ' ok') + '">🌱 ' + v.temp + '℃</span></div>'
+      + (v.weight ? '<div class="vstat"><div class="lb">体重</div><div>' + v.weight + 'kg</div></div>' : '')
+      + (v.water  ? '<div class="vstat"><div class="lb">水分摂取</div><div>' + v.water + 'ml</div></div>' : '')
+      + '</div>'
+      + (chips ? '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">' + chips + '</div>' : '')
+      + (v.condNote ? '<div style="margin-top:4px;font-size:12px;color:var(--wg)">メモ: <span style="color:var(--dark)">' + v.condNote + '</span></div>' : '')
+      + circ + bioStats + photos
+      + (v.treatment ? '<div style="margin-top:6px;font-size:12px;color:var(--wg)">施術: <span style="color:var(--dark)">' + v.treatment + '</span></div>' : '')
+      + (!isLy && v.course ? '<div style="margin-top:4px;font-size:12px;color:var(--wg)">コース: <span style="color:var(--bio);font-weight:500">' + v.course + '</span></div>' : '')
+      + (v.reaction ? '<div style="margin-top:3px;font-size:12px;color:var(--wg)">反応: <span style="color:var(--dark)">' + v.reaction + '</span></div>' : '')
+      + (v.next ? '<div style="margin-top:3px;font-size:12px;color:var(--wg)">申し送り: <span style="color:' + nc + '">' + v.next + '</span></div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+// ════════════════════════ CHARTS ════════════════════════
+var cO = {};
+function renderCharts(p) {
+  var sec = document.getElementById('charts-sec');
+  if (!p.visits || p.visits.length < 2) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  var sv = p.visits.slice().sort(function(a, b) { return a.date.localeCompare(b.date); });
+  var labs = sv.map(function(v) { return v.date.slice(5); });
+
+  var bw = document.getElementById('bio-cw');
+  var lyw = document.getElementById('ly-weight-cw');
+  var fatw = document.getElementById('fat-cw');
+  // 毎回動的周径グラフをクリア
+  var dynCirc = document.getElementById('dyn-circ-charts');
+  if (!dynCirc) {
+    dynCirc = document.createElement('div');
+    dynCirc.id = 'dyn-circ-charts';
+    var circCw = document.getElementById('circ-cw');
+    circCw.parentNode.insertBefore(dynCirc, circCw);
+  }
+  dynCirc.innerHTML = '';
+  // 体温グラフは非表示（リンパは不要、バイオも省略）
+  var tempCw = document.getElementById('temp-chart');
+  if (tempCw) tempCw.closest('.chart-wrap') && (tempCw.closest('.chart-wrap').style.display = p.course === 'ly' ? 'none' : 'none');
+
+  if (p.course === 'ly') {
+    bw.style.display = 'none'; fatw.style.display = 'none';
+    // 体温グラフ非表示
+    var tcw = document.querySelector('.chart-wrap:has(#temp-chart)');
+    if (tcw) tcw.style.display = 'none';
+
+    // 周径を部位ごとに個別グラフ
+    var cv2 = sv.filter(function(v) { return v.circ && Object.keys(v.circ).length; });
+    var circContainer = document.getElementById('circ-cw');
+    circContainer.style.display = 'none';
+
+    // (dynCirc already cleared above)
+
+    if (cv2.length >= 2) {
+      // 全部位名を収集
+      var ks = [];
+      cv2.forEach(function(v) { Object.keys(v.circ).forEach(function(k) { if (ks.indexOf(k) === -1) ks.push(k); }); });
+      var cols = ['#c4956a','#7a9e87','#9b8ec4','#c47a7a','#6a9ec4','#8ec4c4','#c4c47a','#c48ec4','#7ac4a0','#a07ac4'];
+      // 全来店日をラベルに使用（周径がない日はnull）
+      ks.forEach(function(k, i) {
+        var data = sv.map(function(v) { return v.circ && v.circ[k] ? parseFloat(v.circ[k]) : null; });
+        var hasData = data.filter(function(d) { return d !== null; }).length >= 2;
+        if (!hasData) return;
+        var wrap = document.createElement('div');
+        wrap.className = 'chart-wrap';
+        var cid = 'circ-chart-' + i;
+        wrap.innerHTML = '<div class="chart-title">📏 ' + k + '</div><canvas id="' + cid + '"></canvas>';
+        dynCirc.appendChild(wrap);
+        (function(id, label, d, col) {
+          requestAnimationFrame(function() {
+            drawChart(id, labs, [{ label: label, data: d, color: col }], {});
+          });
+        })(cid, k, data, cols[i % cols.length]);
+      });
+    }
+
+    // 体重グラフ（リンパ）
+    var lyWts = sv.filter(function(v) { return parseFloat(v.weight); });
+    if (lyWts.length >= 2) {
+      lyw.style.display = 'block';
+      requestAnimationFrame(function() {
+        drawChart('ly-weight-chart', labs, [{ label: '体重', data: sv.map(function(v) { return parseFloat(v.weight) || null; }), color: '#7a9e87' }], {});
+      });
+    } else lyw.style.display = 'none';
+  } else {
+    // バイオ：体温グラフ表示
+    var tcw2 = document.getElementById('temp-chart');
+    if (tcw2 && tcw2.closest('.chart-wrap')) tcw2.closest('.chart-wrap').style.display = 'block';
+    document.getElementById('circ-cw').style.display = 'none';
+    lyw.style.display = 'none';
+    // dynCirc already cleared above
+    // 体温グラフ（バイオ）
+    if (cO.t) cO.t = null;
+    var tempData = sv.map(function(v) { return parseFloat(v.temp) || null; });
+    document.querySelector('.chart-wrap:has(#temp-chart)') && (document.querySelector('.chart-wrap:has(#temp-chart)').style.display = 'block');
+    requestAnimationFrame(function() {
+      cO.t = drawChart('temp-chart', labs, [{ label: '体温', data: tempData, color: '#9b7ec4' }], { min: 35.5, max: 38.5, ref: 37.5 });
+    });
+    // 体重グラフ（バイオ）
+    var wts = sv.filter(function(v) { return parseFloat(v.weight); });
+    if (wts.length >= 2) {
+      bw.style.display = 'block';
+      var wtData = sv.map(function(v) { return parseFloat(v.weight) || null; });
+      requestAnimationFrame(function() {
+        drawChart('bio-chart', labs, [{ label: '体重', data: wtData, color: '#9b7ec4' }], {});
+      });
+    } else bw.style.display = 'none';
+    // 体脂肪グラフ（バイオ）
+    var fats = sv.filter(function(v) { return parseFloat(v.fat); });
+    if (fats.length >= 2) {
+      fatw.style.display = 'block';
+      var fatData = sv.map(function(v) { return parseFloat(v.fat) || null; });
+      requestAnimationFrame(function() {
+        drawChart('fat-chart', labs, [{ label: '体脂肪率', data: fatData, color: '#c4956a' }], {});
+      });
+    } else fatw.style.display = 'none';
+  }
+}
+function drawChart(canvasId, labels, datasets, opts) {
+  var canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  var W = Math.floor(canvas.parentElement.clientWidth || canvas.parentElement.offsetWidth) - 26;
+  canvas.width = W; canvas.height = 170;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, 170);
+  var pad = { t: 16, b: 34, l: 36, r: 12 };
+  var cw = W - pad.l - pad.r, ch = 170 - pad.t - pad.b;
+  var all = [];
+  datasets.forEach(function(d) { d.data.forEach(function(v) { if (v !== null) all.push(v); }); });
+  if (!all.length) return;
+  var minV = opts.min !== undefined ? opts.min : Math.floor(Math.min.apply(null, all) - 0.5);
+  var maxV = opts.max !== undefined ? opts.max : Math.ceil(Math.max.apply(null, all) + 0.5);
+  var rng = maxV - minV || 1;
+  var xs = labels.length > 1 ? cw / (labels.length - 1) : cw;
+  var ys = function(v) { return pad.t + ch - ((v - minV) / rng) * ch; };
+  ctx.strokeStyle = '#e8e4de'; ctx.lineWidth = 1;
+  for (var i = 0; i <= 4; i++) {
+    var y = pad.t + (ch / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cw, y); ctx.stroke();
+    ctx.fillStyle = '#8a8680'; ctx.font = '9px sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText((maxV - (rng / 4) * i).toFixed(1), pad.l - 2, y + 3);
+  }
+  if (opts.ref !== undefined) {
+    var ry = ys(opts.ref);
+    ctx.strokeStyle = '#f5c6c6'; ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(pad.l, ry); ctx.lineTo(pad.l + cw, ry); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  datasets.forEach(function(ds, di) {
+    ctx.strokeStyle = ds.color; ctx.lineWidth = 2;
+    ctx.beginPath(); var first = true;
+    ds.data.forEach(function(v, i) {
+      if (v === null) return;
+      var x = pad.l + i * xs, yy = ys(v);
+      if (first) { ctx.moveTo(x, yy); first = false; } else ctx.lineTo(x, yy);
+    }); ctx.stroke();
+    ds.data.forEach(function(v, i) {
+      if (v === null) return;
+      var x = pad.l + i * xs, yy = ys(v);
+      ctx.fillStyle = ds.color; ctx.beginPath(); ctx.arc(x, yy, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(x, yy, 2, 0, Math.PI * 2); ctx.fill();
+      // 値ラベルを点の上に表示
+      ctx.fillStyle = ds.color;
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(v.toFixed(1), x, yy - 8);
+    });
+    if (datasets.length > 1) {
+      ctx.fillStyle = ds.color; ctx.fillRect(pad.l + di * 80, 156, 9, 9);
+      ctx.fillStyle = '#2c2a28'; ctx.font = '9px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(ds.label, pad.l + di * 80 + 12, 165);
+    }
+  });
+  ctx.fillStyle = '#8a8680'; ctx.font = '9px sans-serif'; ctx.textAlign = 'center';
+  labels.forEach(function(l, i) { ctx.fillText(l, pad.l + i * xs, 170 - 2); });
+}
+
+// ════════════════════════ ADD VISIT ════════════════════════
+function openAddVisit() {
+  var p = patients.find(function(x) { return x.id === curId; });
+  var isLy = p.course === 'ly';
+  document.getElementById('av-pname').textContent = p.name + ' 様';
+  document.getElementById('v-date').valueAsDate = new Date();
+
+  // 前回記録を初期値にセット
+  var lastV = (p.visits && p.visits.length) ? p.visits[p.visits.length - 1] : null;
+  setFieldVal('v-temp', lastV ? lastV.temp : 36.0, 1);
+  setFieldVal('v-weight', lastV ? lastV.weight : (p.weight || ''), 1);
+  setFieldVal('v-water', lastV ? lastV.water : (p.water || ''), 0);
+  if (p.course === 'bi') {
+    setFieldVal('v-fat',    lastV ? lastV.fat    : '', 1);
+    setFieldVal('v-muscle', lastV ? lastV.muscle : '', 1);
+    setFieldVal('v-bmr',    lastV ? lastV.bmr    : '', 0);
+  }
+
+  // 前回値の表示ラベル
+  var prevNote = document.getElementById('v-weight-prev-note');
+  var prevLabel = document.getElementById('v-prev-label');
+  if (lastV && lastV.date) {
+    prevNote.style.display = 'block';
+    prevLabel.textContent = '前回(' + lastV.date + ')の値を入力中';
+  } else {
+    prevNote.style.display = 'none';
+  }
+  ['v-cond','v-cond-note','v-water','v-treatment','v-reaction','v-next','v-fat','v-muscle','v-bmr','v-course'].forEach(function(id) {
+    var e = document.getElementById(id); if (e) e.value = '';
+  });
+  document.getElementById('v-weight').value = p.weight || '';
+  document.querySelectorAll('#v-cond-chips .chip').forEach(function(c) { c.classList.remove('on'); });
+  document.getElementById('v-cond').value = '';
+  var vcc = document.getElementById('v-course-chips');
+  if (vcc) vcc.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('on'); });
+  window._vB = null; window._vA = null;
+  ['before','after'].forEach(function(t) {
+    document.getElementById('v-' + t + '-prev').style.display = 'none';
+    document.getElementById('v-' + t + '-area').style.display = 'block';
+    document.getElementById('v-' + t + '-inp').value = '';
+  });
+  var cc = document.getElementById('v-circ-card');
+  var bs = document.getElementById('v-bio-sec');
+  var sv = document.getElementById('v-save');
+  if (isLy) {
+    cc.style.display = 'block'; bs.style.display = 'none';
+    sv.className = 'btn-p'; buildCircTables(p.limb || p.limbS || '');
+    document.querySelectorAll('#v-cond-chips .chip, #v-course-chips .chip').forEach(function(c) { c.classList.remove('bio'); });
+    ['av-t1','av-t2','av-t3'].forEach(function(id) { document.getElementById(id).className = 'fch'; });
+  } else {
+    cc.style.display = 'none'; bs.style.display = 'block';
+    sv.className = 'btn-p bi';
+    document.querySelectorAll('#v-cond-chips .chip, #v-course-chips .chip').forEach(function(c) { c.classList.add('bio'); });
+    ['av-t1','av-t2','av-t3'].forEach(function(id) { document.getElementById(id).className = 'fch bi'; });
+  }
+  document.getElementById('av-back').onclick = function() { openPt(curId); };
+  document.getElementById('v-cancel').onclick = function() { openPt(curId); };
+  go('visit');
+}
+
+function buildCircTables(limb) {
+  var wrap = document.getElementById('v-circ-tables');
+  if (!limb) { wrap.innerHTML = '<p style="color:var(--wg);font-size:13px">患肢が未設定です。詳細画面で設定してください。</p>'; return; }
+  var isBoth = limb.includes('両');
+  var isUp = limb.includes('上') || limb.includes('腕');
+  var isLo = limb.includes('下') || limb.includes('脚');
+  var sides = isBoth ? ['右','左'] : [limb.includes('右') ? '右' : '左'];
+  var upSites = ['手背','手関節','前腕(肘下5cm)','肘','上腕(肘上10cm)','腋窩'];
+  var loSites = ['足背','足関節','ふくらはぎ(膝下5cm)','膝関節下','膝関節','大腿（膝上10cm）','鼠径部'];
+  function safeId(s) { return s.replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3040-\u309f]/g, '_'); }
+  function mkTable(title, sites) {
+    var ths = sides.map(function(s) { return '<th>' + s + '</th>'; }).join('');
+    var rows = sites.map(function(site) {
+      var tds = sides.map(function(s) {
+        var sid = 'ci-' + safeId(s) + '-' + safeId(site);
+        return '<td><input class="mi" id="' + sid + '" data-side="' + s + '" data-site="' + site + '" type="number" step="0.1" placeholder="—">'
+          + '<span class="mu" style="color:var(--wg);font-size:11px;padding-left:2px">cm</span></td>';
+      }).join('');
+      return '<tr><td style="font-size:12px;color:var(--wg)">' + site + '</td>' + tds + '</tr>';
+    }).join('');
+    return '<div style="margin-bottom:12px"><div style="font-size:12px;font-weight:500;color:var(--wg);margin-bottom:6px">' + title + '</div>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:13px">'
+      + '<thead><tr><th style="background:var(--sage-p);color:var(--sage);font-weight:500;padding:7px 9px;text-align:left;border-bottom:1.5px solid var(--sage-l)">部位</th>' + ths + '</tr></thead>'
+      + '<tbody>' + rows + '</tbody></table></div>';
+  }
+  var html = '';
+  if (isUp) html += mkTable('上肢（腕）', upSites);
+  if (isLo) html += mkTable('下肢（脚）', loSites);
+  if (!html) html = '<p style="color:var(--wg);font-size:13px">測定部位を確認してください</p>';
+  wrap.innerHTML = html;
+}
+
+function saveVisit() {
+  var temp = document.getElementById('v-temp').value;
+  if (!temp) { toast('体温を入力してください'); return; }
+  var p = patients.find(function(x) { return x.id === curId; });
+  var circ = {};
+  if (p.course === 'ly') {
+    document.querySelectorAll('.mi').forEach(function(inp) {
+      if (inp.value) {
+        var side = inp.getAttribute('data-side') || '';
+        var site = inp.getAttribute('data-site') || '';
+        if (side && site) circ[side + ' ' + site] = inp.value;
+      }
+    });
+  }
+  var v = {
+    date: document.getElementById('v-date').value,
+    temp: temp,
+    weight: document.getElementById('v-weight').value,
+    cond: document.getElementById('v-cond').value,
+    condNote: document.getElementById('v-cond-note').value.trim(),
+    water: document.getElementById('v-water').value,
+    treatment: document.getElementById('v-treatment').value.trim(),
+    reaction: document.getElementById('v-reaction').value.trim(),
+    next: document.getElementById('v-next').value.trim(),
+    circ: circ,
+    savedAt: new Date().toISOString()
+  };
+  if (p.course === 'bi') {
+    v.course = document.getElementById('v-course').value;
+    v.fat = document.getElementById('v-fat').value;
+    v.muscle = document.getElementById('v-muscle').value;
+    v.bmr = document.getElementById('v-bmr').value;
+    v.photoBefore = window._vB || null;
+    v.photoAfter = window._vA || null;
+  }
+  if (!p.visits) p.visits = [];
+  p.visits.push(v);
+  DB.save(patients);
+  toast('✅ 記録を保存しました');
+  openPt(curId);
+}
+
+// ════════════════════════ PDF EXPORT ════════════════════════
+function exportPDF() {
+  var p = patients.find(function(x) { return x.id === curId; });
+  if (!p) return;
+
+  var isLy = p.course === 'ly';
+  var now = new Date();
+  var nowStr = now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日 出力';
+
+  // お名前
+  document.getElementById('ph-name').textContent = p.name + ' 様';
+
+  // 来店回数・期間
+  var visits = p.visits || [];
+  document.getElementById('ph-count').textContent = visits.length + '回';
+  if (visits.length >= 2) {
+    var sorted = visits.slice().sort(function(a,b){ return a.date.localeCompare(b.date); });
+    document.getElementById('ph-period').textContent = sorted[0].date + ' 〜 ' + sorted[sorted.length-1].date;
+  } else if (visits.length === 1) {
+    document.getElementById('ph-period').textContent = visits[0].date;
+  } else {
+    document.getElementById('ph-period').textContent = '—';
+  }
+
+  // 出力日
+  document.getElementById('ph-date').textContent = nowStr;
+
+  setTimeout(function() { window.print(); }, 200);
+}
+
+
+var editVisitIdx = null;
+
+function openEditVisit(idx, e) {
+  e.stopPropagation();
+  editVisitIdx = idx;
+  var p = patients.find(function(x) { return x.id === curId; });
+  var v = p.visits[idx];
+  var isLy = p.course === 'ly';
+
+  // Reuse the add visit screen in edit mode
+  document.getElementById('av-pname').textContent = p.name + ' 様（' + v.date + ' の記録を編集）';
+  document.getElementById('v-date').value = v.date;
+  setFieldVal('v-temp', v.temp || 36.0, 1);
+  setFieldVal('v-weight', v.weight || '', 1);
+  setFieldVal('v-water', v.water || '', 0);
+  document.getElementById('v-cond-note').value = v.condNote || '';
+  document.getElementById('v-treatment').value = v.treatment || '';
+  document.getElementById('v-reaction').value = v.reaction || '';
+  document.getElementById('v-next').value = v.next || '';
+
+  // Restore condition chips
+  document.querySelectorAll('#v-cond-chips .chip').forEach(function(c) { c.classList.remove('on'); });
+  document.getElementById('v-cond').value = v.cond || '';
+  if (v.cond) {
+    var selected = v.cond.split('、');
+    document.querySelectorAll('#v-cond-chips .chip').forEach(function(c) {
+      if (selected.indexOf(c.textContent) !== -1) c.classList.add('on');
+    });
+  }
+
+  var cc = document.getElementById('v-circ-card');
+  var bs = document.getElementById('v-bio-sec');
+  var sv = document.getElementById('v-save');
+  if (isLy) {
+    cc.style.display = 'block'; bs.style.display = 'none';
+    sv.className = 'btn-p';
+    buildCircTables(p.limb || p.limbS || '');
+    // Restore circ values
+    if (v.circ) {
+      Object.keys(v.circ).forEach(function(k) {
+        var parts = k.split(' ');
+        var side = parts[0], site = parts.slice(1).join(' ');
+        var safeS = side.replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3040-\u309f]/g, '_');
+        var safeSite = site.replace(/[^a-zA-Z0-9\u3000-\u9fff\u30a0-\u30ff\u3040-\u309f]/g, '_');
+        var el = document.getElementById('ci-' + safeS + '-' + safeSite);
+        if (el) el.value = v.circ[k];
+      });
+    }
+    ['av-t1','av-t2','av-t3'].forEach(function(id) { document.getElementById(id).className = 'fch'; });
+  } else {
+    cc.style.display = 'none'; bs.style.display = 'block';
+    sv.className = 'btn-p bi';
+    setFieldVal('v-fat',    v.fat    || '', 1);
+    setFieldVal('v-muscle', v.muscle || '', 1);
+    setFieldVal('v-bmr',    v.bmr    || '', 0);
+    // Restore course chips
+    var vcc = document.getElementById('v-course-chips');
+    if (vcc) {
+      vcc.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('on'); });
+      document.getElementById('v-course').value = v.course || '';
+      if (v.course) {
+        var selCourses = v.course.split('、');
+        vcc.querySelectorAll('.chip').forEach(function(c) {
+          if (selCourses.indexOf(c.textContent) !== -1) c.classList.add('on');
+        });
+      }
+    }
+    // Restore photos
+    window._vB = v.photoBefore || null;
+    window._vA = v.photoAfter || null;
+    ['before','after'].forEach(function(t) {
+      var data = t === 'before' ? window._vB : window._vA;
+      if (data) {
+        document.getElementById('v-' + t + '-img').src = data;
+        document.getElementById('v-' + t + '-prev').style.display = 'block';
+        document.getElementById('v-' + t + '-area').style.display = 'none';
+      } else {
+        document.getElementById('v-' + t + '-prev').style.display = 'none';
+        document.getElementById('v-' + t + '-area').style.display = 'block';
+      }
+    });
+    ['av-t1','av-t2','av-t3'].forEach(function(id) { document.getElementById(id).className = 'fch bi'; });
+  }
+
+  // Change save button behavior to update instead of add
+  document.getElementById('v-save').onclick = saveEditedVisit;
+  document.getElementById('av-back').onclick = function() { editVisitIdx = null; openPt(curId); };
+  document.getElementById('v-cancel').onclick = function() { editVisitIdx = null; openPt(curId); };
+  go('visit');
+}
+
+function saveEditedVisit() {
+  var temp = document.getElementById('v-temp').value;
+  if (!temp) { toast('体温を入力してください'); return; }
+  var p = patients.find(function(x) { return x.id === curId; });
+  var v = p.visits[editVisitIdx];
+
+  v.date = document.getElementById('v-date').value;
+  v.temp = temp;
+  v.weight = document.getElementById('v-weight').value;
+  v.cond = document.getElementById('v-cond').value;
+  v.condNote = document.getElementById('v-cond-note').value.trim();
+  v.treatment = document.getElementById('v-treatment').value.trim();
+  v.reaction = document.getElementById('v-reaction').value.trim();
+  v.next = document.getElementById('v-next').value.trim();
+
+  if (p.course === 'ly') {
+    var circ = {};
+    document.querySelectorAll('.mi').forEach(function(inp) {
+      if (inp.value) {
+        var parts = inp.id.split('-'); parts.shift();
+        var side = parts.shift();
+        circ[side + ' ' + parts.join('-')] = inp.value;
+      }
+    });
+    v.circ = circ;
+  } else {
+    v.course = document.getElementById('v-course').value;
+    v.fat = document.getElementById('v-fat').value;
+    v.muscle = document.getElementById('v-muscle').value;
+    v.bmr = document.getElementById('v-bmr').value;
+    v.photoBefore = window._vB || null;
+    v.photoAfter = window._vA || null;
+  }
+
+  DB.save(patients);
+  toast('✅ 記録を更新しました');
+  editVisitIdx = null;
+  // Restore save button to original
+  document.getElementById('v-save').onclick = saveVisit;
+  openPt(curId);
+}
+
+// ════════════════════════ EDIT PATIENT INFO ════════════════════════
+function togglePollenNote(noteId, chipsId) {
+  var chips = document.getElementById(chipsId);
+  var hasPollenOn = chips && Array.from(chips.querySelectorAll('.chip.on')).some(function(c){ return c.textContent === '花粉症'; });
+  var wrap = document.getElementById(noteId);
+  if (wrap) wrap.style.display = hasPollenOn ? 'block' : 'none';
+}
+
+function toggleSig() {
+  var wrap = document.getElementById('d-sig-wrap');
+  var isOpen = wrap.style.display !== 'none';
+  wrap.style.display = isOpen ? 'none' : 'block';
+  document.querySelectorAll('#d-info-fc button').forEach(function(b) {
+    if (b.textContent.includes('同意書')) {
+      b.textContent = isOpen ? '📋 同意書のサインを確認' : '📋 同意書を閉じる';
+    }
+  });
+}
+
+function openEditPt() {
+  var p = patients.find(function(x) { return x.id === curId; });
+  var isLy = p.course === 'ly';
+  go(isLy ? 'edit-ly' : 'edit-bi');
+  // DOMが描画された後にフォームを復元
+  requestAnimationFrame(function() {
+    setTimeout(function() { populateEditForm(p); }, 50);
+  });
+}
+
+function populateEditForm(p) {
+  var isLy = p.course === 'ly';
+  var pfx = isLy ? 'ep-ly' : 'ep-bi';
+
+  var fields = ['name','kana','phone','weight','height','water','history','meds','notes','job-detail'];
+  fields.forEach(function(f) {
+    var el = document.getElementById(pfx + '-' + f);
+    if (el) el.value = p[f] || '';
+  });
+  setBirth(pfx, p.birth || '');
+
+  if (isLy) {
+    // job chip
+    setEditChip(pfx + '-job-chips', p.job);
+    document.getElementById(pfx + '-job').value = p.job || '';
+
+    // conditions
+    setEditChipsMulti(pfx + '-cond-chips', p.conditions);
+    document.getElementById(pfx + '-conditions').value = p.conditions || '';
+    var condOth = document.getElementById(pfx + '-conditions-other'); if (condOth) condOth.value = p.conditionsOther || '';
+    setEditChip(pfx + '-clinic-chips', p.clinic);
+    document.getElementById(pfx + '-clinic').value = p.clinic || '';
+    // cancer history
+    setEditChipsMulti(pfx + '-cancer-chips', p.cancelType);
+    document.getElementById(pfx + '-cancer-type').value = p.cancelType || '';
+    var canOth = document.getElementById(pfx + '-cancer-other'); if (canOth) canOth.value = p.cancerOther || '';
+    setEditChipsMulti(pfx + '-treatment-chips', p.treatmentType);
+    document.getElementById(pfx + '-treatment-type').value = p.treatmentType || '';
+    var canWh = document.getElementById(pfx + '-cancer-when'); if (canWh) canWh.value = p.cancerWhen || '';
+    setEditChip(pfx + '-cancer-status-chips', p.cancerStatus);
+    document.getElementById(pfx + '-cancer-status').value = p.cancerStatus || '';
+    setEditChip(pfx + '-dissection-chips', p.dissection);
+    document.getElementById(pfx + '-dissection').value = p.dissection || '';
+    var dWrap = document.getElementById(pfx + '-dissection-wrap'); if (dWrap) dWrap.style.display = p.dissection === 'あり' ? 'block' : 'none';
+    setEditChipsMulti(pfx + '-dissection-site-chips', p.dissectionSite);
+    document.getElementById(pfx + '-dissection-site').value = p.dissectionSite || '';
+    var dDet = document.getElementById(pfx + '-dissection-detail'); if (dDet) dDet.value = p.dissectionDetail || '';
+    var dNot = document.getElementById(pfx + '-doctor-notes'); if (dNot) dNot.value = p.doctorNotes || '';
+
+    var lyFields = ['allergy','onset','doctor','hospital','staff-note'];
+    lyFields.forEach(function(f) {
+      var el = document.getElementById(pfx + '-' + f);
+      if (el) el.value = p[f.replace('-','').replace('staffnote','staffNote')] || p[f] || '';
+    });
+    document.getElementById(pfx + '-staff-note').value = p.staffNote || '';
+    document.getElementById(pfx + '-allergy').value = p.allergy || '';
+    document.getElementById(pfx + '-onset').value = p.onset || '';
+    document.getElementById(pfx + '-doctor').value = p.doctor || '';
+    document.getElementById(pfx + '-hospital').value = p.hospital || '';
+    document.getElementById(pfx + '-cellulitis-detail').value = p.cellulitisDetail || '';
+
+    // Allergy yn
+    var ayn = document.getElementById(pfx + '-allergy-yn');
+    if (ayn) ayn.value = p.allergyYn || '';
+    document.getElementById(pfx + '-allergy-wrap').style.display = p.allergyYn === 'あり' ? 'block' : 'none';
+    setEditChip(pfx + '-allergy-yn-chips', p.allergyYn);
+
+    // Cellulitis
+    var cyn = document.getElementById(pfx + '-cellulitis-yn');
+    if (cyn) cyn.value = p.cellulitis || '';
+    document.getElementById(pfx + '-cellulitis-wrap').style.display = p.cellulitis === 'あり' ? 'block' : 'none';
+    setEditChip(pfx + '-cellulitis-yn-chips', p.cellulitis);
+
+    // Stage
+    var stg = document.getElementById(pfx + '-stage');
+    if (stg) stg.value = p.stage || '';
+
+    // Limb-s chips
+    setEditChip(pfx + '-limb-s-chips', p.limbS);
+    document.getElementById(pfx + '-limb-s').value = p.limbS || '';
+
+    // Cause chips
+    setEditChip(pfx + '-cause-chips', p.cause);
+    document.getElementById(pfx + '-cause').value = p.cause || '';
+  } else {
+    document.getElementById(pfx + '-staff-note').value = p.staffNote || '';
+    // 仕事内容チップ復元
+    setEditChip(pfx + '-job-chips', p.job);
+    document.getElementById(pfx + '-job').value = p.job || '';
+    // conditions
+    setEditChipsMulti(pfx + '-cond-chips', p.conditions);
+    document.getElementById(pfx + '-conditions').value = p.conditions || '';
+    var bCondOth = document.getElementById(pfx + '-conditions-other'); if (bCondOth) bCondOth.value = p.conditionsOther || '';
+    // surgery - chip-rowなし、hidden inputのみ
+    document.getElementById(pfx + '-surgery').value = p.surgery || '';
+    var sw = document.getElementById(pfx + '-surgery-wrap'); if (sw) sw.style.display = p.surgery === 'あり' ? 'block' : 'none';
+    var sd = document.getElementById(pfx + '-surgery-detail'); if (sd) sd.value = p.surgeryDetail || '';
+    // surgery chip 手動復元
+    var surgWrap = document.querySelector('#sc-edit-bi [onclick*="ep-bi-surgery"]')
+    document.querySelectorAll('#ep-bi-surgery-wrap').forEach(function(){});
+    document.querySelectorAll('#sc-edit-bi .chip').forEach(function(c) {
+      var oc = c.getAttribute('onclick') || '';
+      if (oc.includes("selC('ep-bi-surgery'")) {
+        c.classList.remove('on','ex');
+        if (c.textContent.trim() === p.surgery) c.classList.add('ex');
+      }
+      if (oc.includes("selC('ep-bi-metal'") && !oc.includes('type')) {
+        c.classList.remove('on','ex');
+        if (c.textContent.trim() === p.metal) c.classList.add('ex');
+      }
+    });
+    // metal
+    document.getElementById(pfx + '-metal').value = p.metal || '';
+    var mw = document.getElementById(pfx + '-metal-wrap'); if (mw) mw.style.display = p.metal === 'あり' ? 'block' : 'none';
+    var md = document.getElementById(pfx + '-metal-detail'); if (md) md.value = p.metalDetail || '';
+    // pregnancy
+    setEditChip(pfx + '-pregnancy-chips', p.pregnancy);
+    document.getElementById(pfx + '-pregnancy').value = p.pregnancy || '';
+    // スタッフ症状チップ復元
+    setEditChipsMulti(pfx + '-staff-sym-chips', p.staffSymptoms);
+    document.getElementById(pfx + '-staff-symptoms').value = p.staffSymptoms || '';
+    // 花粉症原因
+    var epPd = document.getElementById(pfx + '-pollen-detail');
+    if (epPd) epPd.value = p.pollenDetail || '';
+    var epPn = document.getElementById(pfx + '-pollen-note');
+    if (epPn) epPn.style.display = (p.allergyTypes && p.allergyTypes.includes('花粉症')) ? 'block' : 'none';
+    document.getElementById(pfx + '-sym-other').value = p.symOther || '';
+    document.getElementById(pfx + '-goal').value = p.goal || '';
+    document.getElementById(pfx + '-allergy-other').value = p.allergyOther || '';
+    document.getElementById(pfx + '-allergy-yn').value = p.allergyYn || '';
+    document.getElementById(pfx + '-allergy-wrap').style.display = p.allergyYn === 'あり' ? 'block' : 'none';
+    setEditChip(pfx + '-allergy-yn-chips', p.allergyYn);
+
+    // Multi-select chips for symptoms and allergy types
+    setEditChipsMulti(pfx + '-sym-chips', p.symptoms);
+    document.getElementById(pfx + '-symptoms').value = p.symptoms || '';
+    // アレルギー種類: HTMLのIDはep-bi-allergy-chips
+    setEditChipsMulti(pfx + '-allergy-chips', p.allergyTypes);
+    document.getElementById(pfx + '-allergy-types').value = p.allergyTypes || '';
+
+    // Single chips
+    ['diet','exercise','stress','alcohol','smoke','period','meno','hormone'].forEach(function(f) {
+      setEditChip(pfx + '-' + f + '-chips', p[f]);
+      document.getElementById(pfx + '-' + f).value = p[f] || '';
+    });
+    // sleep is multi-select
+    setEditChipsMulti(pfx + '-sleep-chips', p.sleep);
+    document.getElementById(pfx + '-sleep').value = p.sleep || '';
+  }
+}
+
+function setEditChip(chipsId, val) {
+  var grp = document.getElementById(chipsId);
+  if (!grp || !val) return;
+  grp.querySelectorAll('.chip').forEach(function(c) {
+    c.classList.remove('on','ex');
+    if (c.textContent === val) c.classList.add('ex');
+  });
+}
+function setEditChipsMulti(chipsId, val) {
+  var grp = document.getElementById(chipsId);
+  if (!grp || !val) return;
+  var vals = val.split('、');
+  grp.querySelectorAll('.chip').forEach(function(c) {
+    c.classList.remove('on');
+    if (vals.indexOf(c.textContent) !== -1) c.classList.add('on');
+  });
+}
+
+function saveEditPt(course) {
+  var p = patients.find(function(x) { return x.id === curId; });
+  var isLy = course === 'ly';
+  var pfx = isLy ? 'ep-ly' : 'ep-bi';
+
+  p.name = gv(pfx + '-name') || p.name;
+  p.kana = gv(pfx + '-kana');
+  p.birth = gv(pfx + '-birth');
+  p.phone = gv(pfx + '-phone');
+  p.weight = gv(pfx + '-weight');
+  p.height = gv(pfx + '-height');
+  p.water  = gv(pfx + '-water');
+  p.history = gv(pfx + '-history');
+  p.meds = gv(pfx + '-meds');
+  p.notes = gv(pfx + '-notes');
+  p.staffNote = gv(pfx + '-staff-note');
+  p.job = gv(pfx + '-job');
+  p.jobDetail = gv(pfx + '-job-detail');
+  if (!isLy) {
+    p.staffSymptoms = gv(pfx + '-staff-symptoms');
+    p.pollenDetail = gv(pfx + '-pollen-detail');
+  }
+
+  if (isLy) {
+    p.allergyYn = gv(pfx + '-allergy-yn');
+    p.allergy = gv(pfx + '-allergy');
+    p.conditions = gv(pfx + '-conditions');
+    p.conditionsOther = gv(pfx + '-conditions-other');
+    p.clinic = gv(pfx + '-clinic');
+    p.cancelType = gv(pfx + '-cancer-type');
+    p.cancerOther = gv(pfx + '-cancer-other');
+    p.treatmentType = gv(pfx + '-treatment-type');
+    p.cancerWhen = gv(pfx + '-cancer-when');
+    p.cancerStatus = gv(pfx + '-cancer-status');
+    p.dissection = gv(pfx + '-dissection');
+    p.dissectionSite = gv(pfx + '-dissection-site');
+    p.dissectionDetail = gv(pfx + '-dissection-detail');
+    p.doctorNotes = gv(pfx + '-doctor-notes');
+    p.onset = gv(pfx + '-onset');
+    p.doctor = gv(pfx + '-doctor');
+    p.hospital = gv(pfx + '-hospital');
+    p.stage = gv(pfx + '-stage');
+    p.limbS = gv(pfx + '-limb-s');
+    p.cause = gv(pfx + '-cause');
+    p.cellulitis = gv(pfx + '-cellulitis-yn');
+    p.cellulitisDetail = gv(pfx + '-cellulitis-detail');
+  } else {
+    p.allergyYn = gv(pfx + '-allergy-yn');
+    p.allergyTypes = gv(pfx + '-allergy-types');
+    p.allergyOther = gv(pfx + '-allergy-other');
+    p.conditions = gv(pfx + '-conditions');
+    p.conditionsOther = gv(pfx + '-conditions-other');
+    p.surgery = gv(pfx + '-surgery');
+    p.surgeryDetail = gv(pfx + '-surgery-detail');
+    p.metal = gv(pfx + '-metal');
+    p.metalType = gv(pfx + '-metal-type');
+    p.metalDetail = gv(pfx + '-metal-detail');
+    p.pregnancy = gv(pfx + '-pregnancy');
+    p.symptoms = gv(pfx + '-symptoms');
+    p.symOther = gv(pfx + '-sym-other');
+    p.goal = gv(pfx + '-goal');
+    p.diet = gv(pfx + '-diet');
+    p.sleep = gv(pfx + '-sleep');
+    p.exercise = gv(pfx + '-exercise');
+    p.stress = gv(pfx + '-stress');
+    p.alcohol = gv(pfx + '-alcohol');
+    p.smoke = gv(pfx + '-smoke');
+    p.period = gv(pfx + '-period');
+    p.meno = gv(pfx + '-meno');
+    p.hormone = gv(pfx + '-hormone');
+  }
+
+  DB.save(patients);
+  toast('✅ 情報を更新しました');
+  openPt(curId);
+}
+
+// ════════════════════════ iOS TOUCH FIX ════════════════════════
+// iOSではdivのonclickが動かない場合があるためtouchendで補完
+document.addEventListener('touchend', function(e) {
+  var el = e.target;
+  // ptcard
+  var card = el.closest('.ptcard');
+  if (card && card.getAttribute('onclick')) {
+    e.preventDefault();
+    var fn = card.getAttribute('onclick');
+    try { eval(fn); } catch(err) {}
+    return;
+  }
+  // cc (course select)
+  var cc = el.closest('.cc');
+  if (cc && cc.getAttribute('onclick')) {
+    e.preventDefault();
+    var fn2 = cc.getAttribute('onclick');
+    try { eval(fn2); } catch(err) {}
+    return;
+  }
+}, { passive: false });
+
+
+function limitBirthYear(input) {
+  // Prevent year going beyond 4 digits
+  var val = input.value;
+  if (!val) return;
+  var parts = val.split('-');
+  if (parts[0] && parts[0].length > 4) {
+    parts[0] = parts[0].slice(0, 4);
+    input.value = parts.join('-');
+  }
+}
+function syncBirth(pfx) {} // kept for compatibility
+function setBirth(pfx, val) {
+  var el = document.getElementById(pfx + '-birth');
+  if (el && val) el.value = val;
+}
+
+
+function stepField(id, delta, min, max, decimals) {
+  var inp = document.getElementById(id);
+  var cur = parseFloat(inp.value);
+  if (isNaN(cur)) cur = parseFloat(inp.dataset.prev) || 0;
+  var next = Math.round((cur + delta) * 100) / 100;
+  if (next < min) next = min;
+  if (next > max) next = max;
+  inp.value = decimals > 0 ? next.toFixed(decimals) : String(Math.round(next));
+  applyTempColor(id, next);
+}
+function syncStepper(id, decimals) {
+  var inp = document.getElementById(id);
+  var v = parseFloat(inp.value);
+  if (!isNaN(v)) applyTempColor(id, v);
+}
+function applyTempColor(id, v) {
+  if (id !== 'v-temp') return;
+  var inp = document.getElementById(id);
+  inp.style.color = v >= 37.5 ? 'var(--acc)' : v >= 37.0 ? '#c4a020' : 'var(--dark)';
+}
+function setFieldVal(id, val, decimals) {
+  var inp = document.getElementById(id);
+  if (!inp) return;
+  if (val === '' || val === null || val === undefined) { inp.value = ''; return; }
+  var v = parseFloat(val);
+  if (isNaN(v)) { inp.value = ''; return; }
+  inp.value = decimals > 0 ? v.toFixed(decimals) : String(Math.round(v));
+  inp.dataset.prev = inp.value;
+  applyTempColor(id, v);
+}
+// Keep setTemp for compatibility with any remaining calls
+function setTemp(val) { setFieldVal('v-temp', val || 36.0, 1); }
+
+
+function deletePt() {
+  var p = patients.find(function(x) { return x.id === curId; });
+  if (!p) return;
+  if (!confirm('「' + p.name + '」様のカルテをすべて削除しますか？\nこの操作は元に戻せません。')) return;
+  patients = patients.filter(function(x) { return x.id !== curId; });
+  DB.save(patients);
+  toast('🗑 カルテを削除しました');
+  renderList();
+  go('list');
+}
+
+function deleteVisit(idx, e) {
+  e.stopPropagation();
+  var p = patients.find(function(x) { return x.id === curId; });
+  if (!p || !p.visits[idx]) return;
+  var dateStr = p.visits[idx].date;
+  if (!confirm(dateStr + ' の来店記録を削除しますか？\nこの操作は元に戻せません。')) return;
+  p.visits.splice(idx, 1);
+  DB.save(patients);
+  toast('🗑 来店記録を削除しました');
+  renderVisits(p);
+  renderCharts(p);
+}
+
+
+function exportData() {
+  // データをHTMLに埋め込んで保存
+  var el = document.getElementById('embedded-data');
+  var html;
+  if (el) {
+    el.textContent = JSON.stringify(patients);
+    html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+  } else {
+    // embedded-dataがない場合はdocumentにデータを注入
+    html = document.documentElement.outerHTML.replace(
+      '</body>',
+      '<script type="application/json" id="embedded-data">' + JSON.stringify(patients) + '<\/script></body>'
+    );
+  }
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'lierre_karute_' + new Date().toISOString().slice(0,10) + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📥 HTMLファイルとして保存しました');
+}
+
+// ════════════════════════ UTILS ════════════════════════
+function show(id) { var e = document.getElementById(id); if (e) e.classList.add('show'); }
+function hide(id) { var e = document.getElementById(id); if (e) e.classList.remove('show'); }
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 1500);
+}
+
+// ════════════════════════ INIT ════════════════════════
+window.addEventListener('load', function() {
+  // サンプルデータ
+  if (!patients.length) {
+    patients = [
+      {
+        id: 'd1', course: 'ly', name: '山田 花子', kana: 'ヤマダ ハナコ',
+        birth: '1970-05-20', gender: '女性', phone: '090-1111-2222',
+        weight: '58', height: '158', history: '乳がん手術（2021年）',
+        meds: '特になし', allergy: '', onset: '2021年10月', limb: '右腕',
+        limbS: '右上肢', cause: '手術後から', doctor: '田中先生', hospital: '〇〇病院',
+        notes: '', stage: 'Stage II', staffNote: '圧迫包帯は中等度で', photos: [], signature: null,
+        createdAt: '2024-01-10T00:00:00Z',
+        visits: [
+          { date: '2024-02-01', temp: '36.5', weight: '58', cond: 'むくみ', condNote: '', treatment: 'MLD 60分', reaction: '気持ちよかった', next: '次回も同メニュー', circ: {'右 手首': '17.5', '右 前腕（最太部）': '23.0', '右 肘': '27.0', '右 上腕': '30.0'}, savedAt: '' },
+          { date: '2024-03-01', temp: '36.7', weight: '57.5', cond: 'むくみ、疲労感', condNote: '少し改善', treatment: 'MLD 60分＋スキンケア', reaction: '', next: '', circ: {'右 手首': '17.0', '右 前腕（最太部）': '22.5', '右 肘': '26.5', '右 上腕': '29.5'}, savedAt: '' },
+          { date: '2024-04-05', temp: '36.4', weight: '57', cond: '体調良好', condNote: '', treatment: 'MLD 60分', reaction: '楽になった', next: '引き続き経過観察', circ: {'右 手首': '16.8', '右 前腕（最太部）': '22.0', '右 肘': '26.0', '右 上腕': '29.0'}, savedAt: '' }
+        ]
+      },
+      {
+        id: 'd2', course: 'bi', name: '鈴木 美咲', kana: 'スズキ ミサキ',
+        birth: '1982-09-03', gender: '女性', phone: '090-3333-4444',
+        weight: '54', height: '162', history: '特になし', meds: 'ピル（低用量）',
+        symptoms: '冷え、疲れやすい、むくみ', symOther: '', goal: '冷え性改善、代謝アップ',
+        diet: '不規則', sleep: '浅い', exercise: 'ほとんどしない', stress: '多め',
+        alcohol: 'たまに', smoke: '吸わない', period: '規則的', meno: 'いいえ',
+        hormone: '使っている', notes: '', staffNote: '腰が弱い', signature: null,
+        createdAt: '2024-02-01T00:00:00Z',
+        visits: [
+          { date: '2024-03-10', temp: '36.0', weight: '54', cond: '冷え、疲労感', condNote: '', treatment: 'バイオマット60分', reaction: '温まった', next: '水分を多めに', fat: '28', muscle: '29', bmr: '1180', photoBefore: null, photoAfter: null, circ: {}, savedAt: '' },
+          { date: '2024-04-12', temp: '36.3', weight: '53.5', cond: '冷え', condNote: '', treatment: 'バイオマット60分', reaction: 'リラックスできた', next: '', fat: '27.5', muscle: '29.5', bmr: '1195', photoBefore: null, photoAfter: null, circ: {}, savedAt: '' },
+          { date: '2024-05-10', temp: '36.5', weight: '53', cond: '体調良好', condNote: '冷えが和らいだ', treatment: 'バイオマット60分＋アロマ', reaction: 'ぐっすり眠れた', next: '引き続き経過観察', fat: '27', muscle: '30', bmr: '1210', photoBefore: null, photoAfter: null, circ: {}, savedAt: '' }
+        ]
+      }
+    ];
+    DB.save(patients);
+  }
+  renderList();
+});
+
+</script>
+
+<script type="application/json" id="embedded-data">[]</script>
+</body>
+</html>
